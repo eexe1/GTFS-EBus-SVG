@@ -1,0 +1,42 @@
+﻿[
+  {
+    "id": 4,
+    "nm": "Peace Memorial Hall",
+    "enm": "Peace Memorial Hall",
+    "dir": 0,
+    "seq": 2,
+    "est": "ARRIVING SOON",
+    "cnt": 1,
+    "bno": [
+      {
+        "no": "HY789",
+        "lat": 13.157468333333334,
+        "lon": -61.22096666666667,
+        "tm": 1654006760,
+        "sid": 171,
+        "seq": 1,
+        "alias": "Joey"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "nm": "GHS",
+    "enm": "GHS",
+    "dir": 0,
+    "seq": 3,
+    "est": "19m58s",
+    "cnt": 1,
+    "bno": [
+      {
+        "no": "HY789",
+        "lat": 13.157468333333334,
+        "lon": -61.22096666666667,
+        "tm": 1654006760,
+        "sid": 171,
+        "seq": 1,
+        "alias": "Joey"
+      }
+    ]
+  }
+]
