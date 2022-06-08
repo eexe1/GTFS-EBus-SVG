@@ -1,0 +1,205 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <LangVersion>latestmajor</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <LangVersion>latestmajor</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Google.Cloud.Functions.Hosting" Version="1.0.0" />
+    <PackageReference Include="Google.Protobuf" Version="3.21.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Google.Protobuf" />
+    <None Remove="Reader\obj\Debug\netcoreapp3.1\apphost" />
+    <None Remove="Reader\bin\Debug\netcoreapp3.1\Reader" />
+    <None Remove="Reader\bin\Debug\netcoreapp3.1\Reader.runtimeconfig.json" />
+    <None Remove="Reader\bin\Debug\netcoreapp3.1\Reader.runtimeconfig.dev.json" />
+    <None Remove="Reader\bin\Debug\netcoreapp3.1\Reader.deps.json" />
+    <None Remove="Reader\bin\Debug\netcoreapp3.1\protobuf-net.dll" />
+    <None Remove="Reader\bin\Debug\netcoreapp3.1\Reader.dll" />
+    <None Remove="Reader\bin\Debug\netcoreapp3.1\Reader.pdb" />
+    <None Remove="Reader\bin\Debug\netcoreapp3.1\GtfsRealtimeBindings.dll" />
+    <None Remove="Reader\obj\Reader.csproj.nuget.g.targets" />
+    <None Remove="Reader\obj\Reader.csproj.nuget.g.props" />
+    <None Remove="Reader\obj\project.nuget.cache" />
+    <None Remove="Reader\obj\project.assets.json" />
+    <None Remove="Reader\obj\Reader.csproj.nuget.dgspec.json" />
+    <None Remove="Reader\obj\Debug\netcoreapp3.1\Reader.csproj.FileListAbsolute.txt" />
+    <None Remove="Reader\obj\Debug\netcoreapp3.1\Reader.assets.cache" />
+    <None Remove="Reader\obj\Debug\netcoreapp3.1\Reader.csproj.CopyComplete" />
+    <None Remove="Reader\obj\Debug\netcoreapp3.1\Reader.GeneratedMSBuildEditorConfig.editorconfig" />
+    <None Remove="Reader\obj\Debug\netcoreapp3.1\Reader.csproj.CoreCompileInputs.cache" />
+    <None Remove="Reader\obj\Debug\netcoreapp3.1\Reader.AssemblyInfoInputs.cache" />
+    <None Remove="Reader\obj\Debug\netcoreapp3.1\Reader.csproj.AssemblyReference.cache" />
+    <None Remove="Reader\obj\Debug\netcoreapp3.1\Reader.dll" />
+    <None Remove="Reader\obj\Debug\netcoreapp3.1\Reader.pdb" />
+    <None Remove="Reader\obj\Debug\netcoreapp3.1\Reader.genruntimeconfig.cache" />
+    <None Remove="TestData\" />
+    <None Remove="ReferenceData\" />
+    <None Remove="Reader\.DS_Store" />
+    <None Remove="Reader\bin\.DS_Store" />
+    <None Remove="Reader\bin\Debug\.DS_Store" />
+    <None Remove="Reader\bin\Debug\netcoreapp3.1\Google.Protobuf.dll" />
+    <None Remove="StopInfoReader\" />
+    <None Remove="Tests\obj\Tests.csproj.nuget.dgspec.json" />
+    <None Remove="Tests\obj\project.nuget.cache" />
+    <None Remove="Tests\obj\Tests.csproj.nuget.g.targets" />
+    <None Remove="Tests\obj\project.assets.json" />
+    <None Remove="Tests\obj\Tests.csproj.nuget.g.props" />
+    <None Remove="Tests\obj\Debug\netcoreapp3.1\Tests.assets.cache" />
+    <None Remove="Tests\obj\Debug\netcoreapp3.1\Tests.csproj.FileListAbsolute.txt" />
+    <None Remove="Tests\obj\Debug\netcoreapp3.1\Tests.GeneratedMSBuildEditorConfig.editorconfig" />
+    <None Remove="Tests\obj\Debug\netcoreapp3.1\Tests.csproj.AssemblyReference.cache" />
+    <None Remove="Tests\obj\Debug\netcoreapp3.1\Tests.AssemblyInfoInputs.cache" />
+    <None Remove="Tests\.DS_Store" />
+    <None Remove="Tests\obj\Debug\netcoreapp3.1\TripTest.csproj.AssemblyReference.cache" />
+    <None Remove="Tests\obj\Debug\netcoreapp3.1\Tests.csproj.CoreCompileInputs.cache" />
+    <None Remove="Tests\obj\Debug\netcoreapp3.1\Tests.csproj.CopyComplete" />
+    <None Remove="Tests\obj\Debug\netcoreapp3.1\Tests.genruntimeconfig.cache" />
+    <None Remove="Tests\obj\Debug\netcoreapp3.1\TripTest.assets.cache" />
+    <None Remove="Tests\obj\Debug\netcoreapp3.1\Tests.dll" />
+    <None Remove="Tests\obj\Debug\netcoreapp3.1\Tests.pdb" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\Microsoft.TestPlatform.CoreUtilities.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\Microsoft.DotNet.PlatformAbstractions.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\TripUpdate.runtimeconfig.dev.json" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\Tests.runtimeconfig.dev.json" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\TripUpdate" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\testhost.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\Google.Protobuf.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\Tests.runtimeconfig.json" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\TripUpdate.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\CloudNative.CloudEvents.AspNetCore.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyModel.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\System.Text.Encodings.Web.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\System.Text.Json.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\Microsoft.VisualStudio.TestPlatform.TestFramework.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\TripUpdate.pdb" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\Tests.deps.json" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\Microsoft.VisualStudio.CodeCoverage.Shim.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\Microsoft.TestPlatform.CrossPlatEngine.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\Newtonsoft.Json.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\Microsoft.TestPlatform.PlatformAbstractions.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\System.Runtime.CompilerServices.Unsafe.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\Google.Cloud.Functions.Framework.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\Microsoft.VisualStudio.TestPlatform.Common.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\Tests.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\CloudNative.CloudEvents.SystemTextJson.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\Google.Cloud.Functions.Hosting.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\Microsoft.TestPlatform.CommunicationUtilities.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\Microsoft.TestPlatform.Utilities.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\NuGet.Frameworks.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\Tests.pdb" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\TripUpdate.deps.json" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\TripUpdate.runtimeconfig.json" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\CloudNative.CloudEvents.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\zh-Hans\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\zh-Hans\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\zh-Hans\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\zh-Hans\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\zh-Hans\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\zh-Hant\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\zh-Hant\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\zh-Hant\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\zh-Hant\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\zh-Hant\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\TestData\stopinfo.json" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\pl\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\pl\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\pl\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\pl\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\pl\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\ja\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\ja\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\ja\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\ja\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\ja\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\it\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\it\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\it\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\it\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\it\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\cs\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\cs\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\cs\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\cs\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\cs\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\ru\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\ru\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\ru\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\ru\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\ru\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\pt-BR\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\pt-BR\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\pt-BR\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\pt-BR\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\pt-BR\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\de\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\de\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\de\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\de\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\de\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\ko\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\ko\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\ko\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\ko\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\ko\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\fr\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\fr\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\fr\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\fr\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\fr\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\es\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\es\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\es\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\es\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\es\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\ReferenceData\stop-windward-map.json" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\ReferenceData\stop-leeward-map.json" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\tr\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\tr\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\tr\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\tr\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
+    <None Remove="Tests\bin\Debug\netcoreapp3.1\tr\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
+    <None Remove="Tests\obj\Debug\netcoreapp3.1\TripTest.GeneratedMSBuildEditorConfig.editorconfig" />
+    <None Remove="Tests\obj\Debug\netcoreapp3.1\TripTest.AssemblyInfoInputs.cache" />
+    <None Remove="Tests\obj\TripTest.csproj.nuget.g.props" />
+    <None Remove="Tests\obj\TripTest.csproj.nuget.g.targets" />
+    <None Remove="Tests\obj\TripTest.csproj.nuget.dgspec.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Reader\obj\Debug\netcoreapp3.1\.NETCoreApp,Version=v3.1.AssemblyAttributes.cs" />
+    <Compile Remove="Reader\Program.cs" />
+    <Compile Remove="Reader\obj\Debug\netcoreapp3.1\Reader.AssemblyInfo.cs" />
+    <Compile Remove="Tests\obj\Debug\netcoreapp3.1\.NETCoreApp,Version=v3.1.AssemblyAttributes.cs" />
+    <Compile Remove="Tests\UnitTest1.cs" />
+    <Compile Remove="Tests\obj\Debug\netcoreapp3.1\Tests.AssemblyInfo.cs" />
+    <Compile Remove="Tests\obj\Debug\netcoreapp3.1\TripTest.AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="TestData\" />
+    <Folder Include="ReferenceData\" />
+    <Folder Include="StopInfo\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="TestData\stopinfo.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ReferenceData\stop-windward-map.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ReferenceData\stop-leeward-map.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>

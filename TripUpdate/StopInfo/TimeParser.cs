@@ -17,30 +17,36 @@ namespace BusTripUpdate.StopInfoReader
             }
 
 			string[] values = time.Split(delimiterChars);
-
-			long timestamp = (long)DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
-
-			if (values.Length > 2)
+			if (values.Length > 3)
             {
-
 				long hour = int.Parse(values[0]) * 3600;
 				long min = int.Parse(values[1]) * 60;
 				long sec = int.Parse(values[2]);
 
-				return timestamp + hour + min + sec;
-			} else if (values.Length > 1)
+				return hour + min + sec;
+			} else if (values.Length > 2)
             {
 				long min = int.Parse(values[0]) * 60;
 				long sec = int.Parse(values[1]);
-				return timestamp + min + sec;
-			} else if (values.Length > 0)
+				return min + sec;
+			} else if (values.Length > 1)
             {
 				long sec = int.Parse(values[0]);
-				return timestamp + sec;
+				return sec;
             } else
             {
 				return -1;
             }
+		}
+
+		public static long ToEpoch(long seconds)
+        {
+
+			long timestamp = (long)DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
+
+			return timestamp + seconds;
+
+
 		}
 	}
 }

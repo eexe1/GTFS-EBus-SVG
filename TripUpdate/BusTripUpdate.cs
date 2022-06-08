@@ -40,7 +40,7 @@ namespace BusTripUpdate
                     ScheduleRelationship = TripDescriptor.Types.ScheduleRelationship.Added
                 };
 
-                long arrivalTime = TimeParser.ParseTime(stop.Est);
+                long arrivalTime = TimeParser.ToEpoch(TimeParser.ParseTime(stop.Est));
                 if (arrivalTime == -1)
                 {
                     // invalid estimate
