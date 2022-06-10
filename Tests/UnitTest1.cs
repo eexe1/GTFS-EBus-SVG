@@ -1,6 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using BusTripUpdate.StopInfoReader;
-using System.Text.RegularExpressions;
+﻿using BusTripUpdate.StopInfo;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using System;
 
 namespace Tests

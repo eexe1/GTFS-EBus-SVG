@@ -1,7 +1,4 @@
-﻿using System;
-using System.Text.Json.Serialization;
-
-namespace BusTripUpdate.StopInfoReader
+﻿namespace BusTripUpdate.StopInfo
 {
     public class StopInfo
     {

@@ -1,24 +1,21 @@
 ﻿using System;
-using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using TransitRealtime;
 using Google.Protobuf;
-using System.Collections;
-using Google.Protobuf.Collections;
 
 namespace Reader
 {
     class Program
     {
         static readonly HttpClient client = new();
-        static async Task Main()
+        static async Task Main(string[] args)
         {
 
             // Call asynchronous network methods in a try/catch block to handle exceptions.
             try
             {
-                string test = await client.GetStringAsync("http://127.0.0.1:8080");
+                string test = await client.GetStringAsync("http://127.0.0.1:8080?route=" + args[0]);
 
                 ByteString byteString = ByteString.FromBase64(test);
                 FeedMessage feedMessage = FeedMessage.Parser.ParseFrom(byteString);

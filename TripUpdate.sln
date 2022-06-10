@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reader", "Reader\Reader.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TripTest", "Tests\TripTest.csproj", "{780E6189-F78F-472F-BC11-97A6254E0244}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TripUpdate", "TripUpdate\TripUpdate.csproj", "{B09AEF26-FD21-4817-90D2-BBCBBF5DE038}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusTripUpdate", "TripUpdate\BusTripUpdate.csproj", "{B09AEF26-FD21-4817-90D2-BBCBBF5DE038}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

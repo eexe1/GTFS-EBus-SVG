@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using System.Threading.Tasks;
 
-namespace BusTripUpdate.StopInfoReader
+namespace BusTripUpdate.StopInfo
 {
     public class SampleStopInfoReader : IStopInfoReader
     {
@@ -11,23 +12,33 @@ namespace BusTripUpdate.StopInfoReader
         {
         }
 
+        public IStopInfoReader.Route GetRoute()
+        {
+            return IStopInfoReader.Route.Windward;
+        }
 
-        List<StopInfo> IStopInfoReader.RetrieveStopInfo()
+        Task<List<StopInfo>> IStopInfoReader.RetrieveStopInfoAsync()
         {
 
-            string jsonString = File.ReadAllText(@"./TestData/stopinfo.json");
-
-            var serializeOptions = new JsonSerializerOptions
+            var task = new Task<List<StopInfo>>(() =>
             {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            };
+                string jsonString = File.ReadAllText(@"./TestData/stopinfo.json");
 
-            List<StopInfo> stopInfoList = JsonSerializer
-                .Deserialize<List<StopInfo>>(jsonString, serializeOptions);
+                var serializeOptions = new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                };
 
-            return stopInfoList;
+                List<StopInfo> stopInfoList = JsonSerializer
+                    .Deserialize<List<StopInfo>>(jsonString, serializeOptions);
+                return stopInfoList;
 
+            });
+
+            task.RunSynchronously();
+            return task;
         }
+
     }
 }
 

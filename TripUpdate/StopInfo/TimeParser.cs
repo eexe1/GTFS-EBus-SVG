@@ -1,5 +1,5 @@
 ﻿using System;
-namespace BusTripUpdate.StopInfoReader
+namespace BusTripUpdate.StopInfo
 {
 	public class TimeParser
 	{
@@ -7,13 +7,19 @@ namespace BusTripUpdate.StopInfoReader
 		{
 		}
 
-		// return -1 if invalid
+		// return -1 if invalid.
+		// time in seconds
 		public static long ParseTime(string time)
         {
 			char[] delimiterChars = { 'h', 'm', 's'};
 			if (time.Contains("NO BUS"))
             {
 				return -1;
+            }
+
+			if (time.Contains("ARRIVING SOON"))
+            {
+				return 60;
             }
 
 			string[] values = time.Split(delimiterChars);

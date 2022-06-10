@@ -2,18 +2,22 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using System.Threading.Tasks;
 
-namespace BusTripUpdate.StopInfoReader
+namespace BusTripUpdate.StopInfo
 {
     public interface IStopInfoReader
     {
-        List<StopInfo> RetrieveStopInfo();
+
+        Task<List<StopInfo>> RetrieveStopInfoAsync();
 
         enum Route
         {
             Windward,
             Leeward
         }
+
+        Route GetRoute();
 
         string FindSIDBySeq(string seq, Route route)
         {

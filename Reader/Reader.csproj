@@ -16,11 +16,11 @@
     <None Remove="Google.Protobuf" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\proto\GtfsRealtime.cs">
-      <Link>GtfsRealtime.cs</Link>
-    </Compile>
+    <PackageReference Include="Google.Protobuf" Version="3.21.1" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.21.1" />
+    <Compile Include="..\TripUpdate\proto\GtfsRealtime.cs">
+      <Link>GtfsRealtime.cs</Link>
+    </Compile>
   </ItemGroup>
 </Project>
