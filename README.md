@@ -1,10 +1,12 @@
 # Introduction
 
-GTFS-EBus-SVG is built for the Saint Vincent and the Grenadines E-Bus system. It brings the real-time bus information to the Google Transit. Therefore, users on Google Map can see the real-time arrival for buses. The application is built in .Net Core and runs on Google Cloud Function.
+GTFS-EBus-SVG is built for the Saint Vincent and the Grenadines E-Bus system. It brings the real-time bus information to the Google Transit. Therefore, users on Google Map can see the real-time arrival for buses. The application is built in .Net Core 3.1 and runs on Google Cloud Function.
 
 Data source comes WebStopInfo API from *https://ebus.gov.vc*. The update interval is expected to be 30 seconds.
 
-# Maintenance
+The service url is _https://{google_cloud_function_path}?route={route}_ where _route_ is either _windward_ or _leeward_.
+
+# Data Explanation
 
 To understand the data, you must first obtain the knowledge of the E-Bus system data format.
 WebStopInfo API: *https://ebus.gov.vc/stopapi/webstopinfo?rid={id}* where Windward's side id is 4, and Leeward, 5.

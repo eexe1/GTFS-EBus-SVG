@@ -1,0 +1,7 @@
+steps:
+  - name: "mcr.microsoft.com/dotnet/sdk:3.1-alpine3.14"
+    entrypoint: "/bin/sh"
+    args:
+      - ./test-script.sh
+options:
+  logging: CLOUD_LOGGING_ONLY
