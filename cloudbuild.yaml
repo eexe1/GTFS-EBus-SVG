@@ -1,0 +1,11 @@
+steps:
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    args:
+      - gcloud
+      - functions
+      - deploy
+      - gtfs-trip-update
+      - --region=us-east1
+      - --source=./TripUpdate
+      - --trigger-http
+      - --runtime=dotnet3
