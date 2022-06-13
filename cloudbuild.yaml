@@ -9,4 +9,5 @@ steps:
       - --source=./TripUpdate
       - --trigger-http
       - --runtime=dotnet3
-logsBucket: CLOUD_LOGGING_ONLY
+options:
+  logging: CLOUD_LOGGING_ONLY
