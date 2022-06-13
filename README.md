@@ -33,4 +33,4 @@ Real-time data is availabe from the above API, and it consists of an array of th
 }
 ```
 
-_id_ is the route. _nm_, _enm_ are the incoming bus name. _seq_ is the bus stop sequence number. _bno_ contains the bus current information including _no_ bus plate number, latitude, longitude, _sid_ near bus stop id, _seq_ near bus stop sequence number.
+_id_ is the route. _nm_, _enm_ are the bus stop name. _seq_ is the bus stop sequence number. _bno_ contains the bus current information including _no_ bus plate number, latitude, longitude, _sid_ near bus stop id, _seq_ near bus stop sequence number.
