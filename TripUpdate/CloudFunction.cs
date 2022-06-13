@@ -42,7 +42,7 @@ namespace BusTripUpdate
             }
 
             _logger.LogInformation("Start to gather stop info");
-            BusTripUpdate.MessageBuilder messageBuilder = new(_logger, reader);
+            MessageBuilder messageBuilder = new(_logger, reader);
             var output = await messageBuilder.GetStopInfoMessage();
             context.Response.StatusCode = 200;
             await context.Response.WriteAsync(output);

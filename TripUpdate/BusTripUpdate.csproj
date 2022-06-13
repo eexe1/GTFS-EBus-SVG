@@ -40,7 +40,6 @@
     <None Remove="Reader\obj\Debug\netcoreapp3.1\Reader.dll" />
     <None Remove="Reader\obj\Debug\netcoreapp3.1\Reader.pdb" />
     <None Remove="Reader\obj\Debug\netcoreapp3.1\Reader.genruntimeconfig.cache" />
-    <None Remove="TestData\" />
     <None Remove="ReferenceData\" />
     <None Remove="Reader\.DS_Store" />
     <None Remove="Reader\bin\.DS_Store" />
@@ -187,14 +186,10 @@
     <Compile Remove="Tests\obj\Debug\netcoreapp3.1\TripTest.AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="TestData\" />
     <Folder Include="ReferenceData\" />
     <Folder Include="StopInfo\" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="TestData\stopinfo.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="ReferenceData\stop-windward-map.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
