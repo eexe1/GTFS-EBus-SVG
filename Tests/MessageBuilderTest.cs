@@ -18,7 +18,7 @@ namespace Tests
             SampleStopInfoReader reader = new();
             var logger = NullLogger.Instance;
             MessageBuilder messageBuilder = new(logger, reader);
-            var message = await messageBuilder.GetStopInfoMessage();
+            var message = await messageBuilder.GetEncodedStopInfoMessage();
 
             // decode
 

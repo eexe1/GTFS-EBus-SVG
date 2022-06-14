@@ -10,29 +10,35 @@ namespace BusTripUpdate
     public class MessageBuilder
     {
         private readonly ILogger _logger;
-        private readonly IStopInfoReader _reader;
+        private readonly IStopInfoReader _readerA;
+        private readonly IStopInfoReader _readerB;
 
         public MessageBuilder(ILogger logger, IStopInfoReader reader)
         {
             _logger = logger;
-            _reader = reader;
+            _readerA = reader;
         }
 
-        public async Task<string> GetStopInfoMessage()
+        public MessageBuilder(ILogger logger, IStopInfoReader readerA, IStopInfoReader readerB)
+        {
+            _logger = logger;
+            _readerA = readerA;
+            _readerB = readerB;
+        }
+
+        private async Task<FeedEntity> GetStopInfoFeedEntity(IStopInfoReader reader)
         {
 
-            FeedMessage message = new();
-
-            List<StopInfo.StopInfo> stopList = await _reader.RetrieveStopInfoAsync();
+            List<StopInfo.StopInfo> stopList = await reader.RetrieveStopInfoAsync();
 
             if (stopList.Count < 1)
             {
                 _logger.LogDebug("Fail to retrieve any stop info");
                 // no stops to proceed
-                return EncodeMessage(message);
+                return new FeedEntity();
             }
 
-            IStopInfoReader.Route route = _reader.GetRoute();
+            IStopInfoReader.Route route = reader.GetRoute();
             // all stops share a single trip, hence, one TripUpdate to contain all stopTimeUpdate events
             TripDescriptor tripDescriptor = new()
             {
@@ -45,7 +51,7 @@ namespace BusTripUpdate
             // iterate the stop lists to append a stopTimeUpdate event to the trip
             foreach (StopInfo.StopInfo stop in stopList)
             {
-                string sid = _reader.FindSIDBySeq(stop.Seq.ToString(), route);
+                string sid = reader.FindSIDBySeq(stop.Seq.ToString(), route);
 
                 // build a FeedEntity
 
@@ -69,15 +75,30 @@ namespace BusTripUpdate
             }
 
             FeedEntity entity = new() { Id = Guid.NewGuid().ToString(), TripUpdate = tripUpdate };
+            
 
-            message.Entity.Add(entity);
-
-            return EncodeMessage(message);
+            return entity;
         }
 
         private string EncodeMessage(IMessage message)
         {
             return message.ToByteString().ToBase64();
+        }
+
+        public async Task<string> GetEncodedStopInfoMessage()
+        {
+            var message = new FeedMessage();
+            var entity = await GetStopInfoFeedEntity(_readerA);
+
+            message.Entity.Add(entity);
+
+            if (_readerB != null)
+            {
+                var entityB = await GetStopInfoFeedEntity(_readerB);
+                message.Entity.Add(entityB);
+            }
+
+            return EncodeMessage(message);
         }
 
     }

@@ -22,28 +22,40 @@ namespace BusTripUpdate
 
             var isWindward = route?.ToLower() == "windward";
             var isLeeward = route?.ToLower() == "leeward";
+            var isAll = route?.ToLower() == "all";
 
-            IStopInfoReader.Route? routeEnum = isWindward ? IStopInfoReader.Route.Windward : (isLeeward ? IStopInfoReader.Route.Leeward : (IStopInfoReader.Route?)null);
             StopInfoReader reader;
-            switch (routeEnum)
+
+            IStopInfoReader.Route routeEnum = isLeeward ? IStopInfoReader.Route.Leeward : IStopInfoReader.Route.Windward;
+
+            // if route is not provided, return an error
+            if (!isWindward && !isLeeward && !isAll)
             {
-                case IStopInfoReader.Route.Windward:
-                    reader = new(IStopInfoReader.Route.Windward);
-                    break;
-                case IStopInfoReader.Route.Leeward:
-                    reader = new(IStopInfoReader.Route.Leeward);
-                    break;
-                default:
-                    context.Response.StatusCode = 400;
-                    var error = "Incorrect parameters, contact developers";
-                    _logger.LogError(error);
-                    await context.Response.WriteAsync(error);
-                    return;
+                context.Response.StatusCode = 400;
+                var error = "Incorrect parameters, contact developers";
+                _logger.LogError(error);
+                await context.Response.WriteAsync(error);
+                return;
             }
 
-            _logger.LogInformation("Start to gather stop info");
-            MessageBuilder messageBuilder = new(_logger, reader);
-            var output = await messageBuilder.GetStopInfoMessage();
+            string output;
+            if (isAll)
+            {
+                _logger.LogInformation("Start to gather stop info for both routes");
+                // get data from both routes
+                StopInfoReader readerA = new(IStopInfoReader.Route.Windward);
+                StopInfoReader readerB = new(IStopInfoReader.Route.Leeward);
+                MessageBuilder messageBuilder = new(_logger, readerA, readerB);
+                output = await messageBuilder.GetEncodedStopInfoMessage();
+            }
+            else
+            {
+                reader = new(routeEnum);
+                _logger.LogInformation("Start to gather stop info for route:{0}", routeEnum);
+                MessageBuilder messageBuilder = new(_logger, reader);
+                output = await messageBuilder.GetEncodedStopInfoMessage();
+            }
+
             context.Response.StatusCode = 200;
             await context.Response.WriteAsync(output);
 
