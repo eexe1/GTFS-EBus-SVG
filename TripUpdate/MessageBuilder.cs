@@ -88,6 +88,15 @@ namespace BusTripUpdate
         public async Task<string> GetEncodedStopInfoMessage()
         {
             var message = new FeedMessage();
+
+            var header = new FeedHeader
+            {
+                GtfsRealtimeVersion = "2",
+                Timestamp = (ulong)DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalSeconds
+            };
+
+            message.Header = header;
+
             var entity = await GetStopInfoFeedEntity(_readerA);
 
             message.Entity.Add(entity);
