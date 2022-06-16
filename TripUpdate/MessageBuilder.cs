@@ -26,7 +26,8 @@ namespace BusTripUpdate
             _readerB = readerB;
         }
 
-        private async Task<FeedEntity> GetStopInfoFeedEntity(IStopInfoReader reader)
+#nullable enable
+        private async Task<FeedEntity?> GetStopInfoFeedEntity(IStopInfoReader reader)
         {
 
             List<StopInfo.StopInfo> stopList = await reader.RetrieveStopInfoAsync();
@@ -35,7 +36,7 @@ namespace BusTripUpdate
             {
                 _logger.LogDebug("Fail to retrieve any stop info");
                 // no stops to proceed
-                return new FeedEntity();
+                return null;
             }
 
             IStopInfoReader.Route route = reader.GetRoute();
@@ -74,12 +75,19 @@ namespace BusTripUpdate
                 tripUpdate.StopTimeUpdate.Add(stopTimeUpdate);
             }
 
+            if (tripUpdate.StopTimeUpdate.Count < 1)
+            {
+                _logger.LogDebug("No available arrival estimate");
+                // no arrival estimate to proceed
+                return null;
+            }
+
             FeedEntity entity = new() { Id = Guid.NewGuid().ToString(), TripUpdate = tripUpdate };
-            
+
 
             return entity;
         }
-
+#nullable disable
         public async Task<FeedMessage> GetStopInfoMessage()
         {
             var message = new FeedMessage();
@@ -92,14 +100,21 @@ namespace BusTripUpdate
 
             message.Header = header;
 
-            var entity = await GetStopInfoFeedEntity(_readerA);
+            var entityA = await GetStopInfoFeedEntity(_readerA);
 
-            message.Entity.Add(entity);
+            if (entityA is FeedEntity valueOfEntityA)
+            {
+                message.Entity.Add(valueOfEntityA);
+            }
+            
 
             if (_readerB != null)
             {
                 var entityB = await GetStopInfoFeedEntity(_readerB);
-                message.Entity.Add(entityB);
+                if (entityB is FeedEntity valueOfEntityB)
+                {
+                    message.Entity.Add(valueOfEntityB);
+                }
             }
 
             return message;

@@ -40,7 +40,6 @@ namespace BusTripUpdate
                 await context.Response.WriteAsync(error);
                 return;
             }
-
             FeedMessage message;
             if (isAll)
             {
