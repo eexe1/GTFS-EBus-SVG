@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using BusTripUpdate.StopInfo;
+using TransitRealtime;
+using Google.Protobuf;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace BusTripUpdate
 {
@@ -38,7 +41,7 @@ namespace BusTripUpdate
                 return;
             }
 
-            string output;
+            FeedMessage message;
             if (isAll)
             {
                 _logger.LogInformation("Start to gather stop info for both routes");
@@ -46,19 +49,26 @@ namespace BusTripUpdate
                 StopInfoReader readerA = new(IStopInfoReader.Route.Windward);
                 StopInfoReader readerB = new(IStopInfoReader.Route.Leeward);
                 MessageBuilder messageBuilder = new(_logger, readerA, readerB);
-                output = await messageBuilder.GetEncodedStopInfoMessage();
+                message = await messageBuilder.GetStopInfoMessage();
             }
             else
             {
                 reader = new(routeEnum);
                 _logger.LogInformation("Start to gather stop info for route:{0}", routeEnum);
                 MessageBuilder messageBuilder = new(_logger, reader);
-                output = await messageBuilder.GetEncodedStopInfoMessage();
+                message = await messageBuilder.GetStopInfoMessage();
             }
 
             context.Response.StatusCode = 200;
-            await context.Response.WriteAsync(output);
 
-        }
+            var syncIOFeature = context.Features.Get<IHttpBodyControlFeature>();
+            if (syncIOFeature != null)
+            {
+                syncIOFeature.AllowSynchronousIO = true;
+            }
+
+            message.WriteTo(context.Response.Body);
+
+            }
     }
 }

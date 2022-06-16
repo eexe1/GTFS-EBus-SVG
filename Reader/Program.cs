@@ -15,10 +15,9 @@ namespace Reader
             // Call asynchronous network methods in a try/catch block to handle exceptions.
             try
             {
-                string test = await client.GetStringAsync("http://127.0.0.1:8080?route=" + args[0]);
-
-                ByteString byteString = ByteString.FromBase64(test);
-                FeedMessage feedMessage = FeedMessage.Parser.ParseFrom(byteString);
+                var byteArray = await client.GetByteArrayAsync("http://127.0.0.1:8080?route=" + args[0]);
+                
+                FeedMessage feedMessage = FeedMessage.Parser.ParseFrom(byteArray);
 
                 foreach (FeedEntity entity in feedMessage.Entity)
                 {

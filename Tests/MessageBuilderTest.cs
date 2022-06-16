@@ -18,12 +18,11 @@ namespace Tests
             SampleStopInfoReader reader = new();
             var logger = NullLogger.Instance;
             MessageBuilder messageBuilder = new(logger, reader);
-            var message = await messageBuilder.GetEncodedStopInfoMessage();
-
+            var message = await messageBuilder.GetStopInfoMessage();
+            var result = message.ToByteArray();
             // decode
 
-            ByteString byteString = ByteString.FromBase64(message);
-            FeedMessage feedMessage = FeedMessage.Parser.ParseFrom(byteString);
+            FeedMessage feedMessage = FeedMessage.Parser.ParseFrom(result);
             foreach (FeedEntity entity in feedMessage.Entity)
             {
                 Assert.AreEqual(entity.TripUpdate.Trip.TripId, "WF_1");

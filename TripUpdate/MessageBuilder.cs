@@ -80,12 +80,7 @@ namespace BusTripUpdate
             return entity;
         }
 
-        private string EncodeMessage(IMessage message)
-        {
-            return message.ToByteString().ToBase64();
-        }
-
-        public async Task<string> GetEncodedStopInfoMessage()
+        public async Task<FeedMessage> GetStopInfoMessage()
         {
             var message = new FeedMessage();
 
@@ -107,7 +102,7 @@ namespace BusTripUpdate
                 message.Entity.Add(entityB);
             }
 
-            return EncodeMessage(message);
+            return message;
         }
 
     }
