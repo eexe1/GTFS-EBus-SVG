@@ -41,7 +41,15 @@ namespace BusTripUpdate
 
             IStopInfoReader.Route route = reader.GetRoute();
 
-            var atlanticTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Atlantic Standard Time");
+            TimeZoneInfo atlanticTimeZone;
+
+            try
+            {
+                atlanticTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Atlantic Standard Time");
+            } catch (TimeZoneNotFoundException)
+            {
+                atlanticTimeZone = TimeZoneInfo.FindSystemTimeZoneById("America/St_Vincent");
+            }
 
             // all outbound stops share a single trip, hence, one TripUpdate to contain all stopTimeUpdate events
             TripDescriptor tripDescriptor1 = new()
