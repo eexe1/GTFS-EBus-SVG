@@ -27,7 +27,7 @@ namespace BusTripUpdate
         }
 
 #nullable enable
-        private async Task<FeedEntity?> GetStopInfoFeedEntity(IStopInfoReader reader)
+        private async Task<FeedEntity[]?> GetStopInfoFeedEntity(IStopInfoReader reader)
         {
 
             List<StopInfo.StopInfo> stopList = await reader.RetrieveStopInfoAsync();
@@ -40,14 +40,34 @@ namespace BusTripUpdate
             }
 
             IStopInfoReader.Route route = reader.GetRoute();
-            // all stops share a single trip, hence, one TripUpdate to contain all stopTimeUpdate events
-            TripDescriptor tripDescriptor = new()
+
+            var atlanticTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Atlantic Standard Time");
+
+            // all outbound stops share a single trip, hence, one TripUpdate to contain all stopTimeUpdate events
+            TripDescriptor tripDescriptor1 = new()
             {
-                // use the first trip of each direction as a reference
-                TripId = route == IStopInfoReader.Route.Windward ? "WF_1" : "LF_1",
-                ScheduleRelationship = TripDescriptor.Types.ScheduleRelationship.Added
+                //use the first trip of each direction as a reference
+                //TripId = route == IStopInfoReader.Route.Windward ? "WF_1" : "LF_1",
+                ScheduleRelationship = TripDescriptor.Types.ScheduleRelationship.Added,
+                RouteId = route == IStopInfoReader.Route.Windward ? "41" : "51",
+                StartDate = DateTime.Today.ToString("YYYYMMDD"),
+                StartTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, atlanticTimeZone).ToString("hh:mm:ss")
             };
-            TripUpdate tripUpdate = new() { Trip = tripDescriptor };
+
+            TripUpdate tripUpdate1 = new() { Trip = tripDescriptor1 };
+
+            // inbound
+            TripDescriptor tripDescriptor2 = new()
+            {
+                //use the first trip of each direction as a reference
+                //TripId = route == IStopInfoReader.Route.Windward ? "FW_1" : "FL_1",
+                ScheduleRelationship = TripDescriptor.Types.ScheduleRelationship.Added,
+                RouteId = route == IStopInfoReader.Route.Windward ? "42" : "52",
+                StartDate = DateTime.Today.ToString("YYYYMMDD"),
+                StartTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, atlanticTimeZone).ToString("hh:mm:ss")
+            };
+
+            TripUpdate tripUpdate2 = new() { Trip = tripDescriptor2 };
 
             // iterate the stop lists to append a stopTimeUpdate event to the trip
             foreach (StopInfo.StopInfo stop in stopList)
@@ -72,20 +92,44 @@ namespace BusTripUpdate
                 };
 
                 TripUpdate.Types.StopTimeUpdate stopTimeUpdate = new() { StopId = sid, Arrival = stopTimeEvent };
-                tripUpdate.StopTimeUpdate.Add(stopTimeUpdate);
+                if (route == IStopInfoReader.Route.Windward)
+                {
+                    // inbound
+                    if (stop.Seq <= 41)
+                    {
+                        tripUpdate1.StopTimeUpdate.Add(stopTimeUpdate);
+                    }
+                    // outbound
+                    else
+                    {
+                        tripUpdate2.StopTimeUpdate.Add(stopTimeUpdate);
+                    }
+                }
+                else if (route == IStopInfoReader.Route.Leeward)
+                {
+                    if (stop.Seq <= 24)
+                    {
+                        tripUpdate1.StopTimeUpdate.Add(stopTimeUpdate);
+                    }
+                    else
+                    {
+                        tripUpdate2.StopTimeUpdate.Add(stopTimeUpdate);
+                    }
+                }
+
             }
 
-            if (tripUpdate.StopTimeUpdate.Count < 1)
+            if (tripUpdate1.StopTimeUpdate.Count < 1)
             {
                 _logger.LogDebug("No available arrival estimate");
                 // no arrival estimate to proceed
                 return null;
             }
 
-            FeedEntity entity = new() { Id = Guid.NewGuid().ToString(), TripUpdate = tripUpdate };
+            FeedEntity entity1 = new() { Id = Guid.NewGuid().ToString(), TripUpdate = tripUpdate1 };
+            FeedEntity entity2 = new() { Id = Guid.NewGuid().ToString(), TripUpdate = tripUpdate2 };
 
-
-            return entity;
+            return new FeedEntity[] { entity1, entity2 };
         }
 #nullable disable
         public async Task<FeedMessage> GetStopInfoMessage()
@@ -102,16 +146,16 @@ namespace BusTripUpdate
 
             var entityA = await GetStopInfoFeedEntity(_readerA);
 
-            if (entityA is FeedEntity valueOfEntityA)
+            if (entityA is FeedEntity[] valueOfEntityA)
             {
                 message.Entity.Add(valueOfEntityA);
             }
-            
+
 
             if (_readerB != null)
             {
                 var entityB = await GetStopInfoFeedEntity(_readerB);
-                if (entityB is FeedEntity valueOfEntityB)
+                if (entityB is FeedEntity[] valueOfEntityB)
                 {
                     message.Entity.Add(valueOfEntityB);
                 }
