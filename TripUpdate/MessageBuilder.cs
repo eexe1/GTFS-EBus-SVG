@@ -58,7 +58,7 @@ namespace BusTripUpdate
                 //TripId = route == IStopInfoReader.Route.Windward ? "WF_1" : "LF_1",
                 ScheduleRelationship = TripDescriptor.Types.ScheduleRelationship.Added,
                 RouteId = route == IStopInfoReader.Route.Windward ? "41" : "51",
-                StartDate = DateTime.Today.ToString("YYYYMMDD"),
+                StartDate = DateTime.Today.ToString("yyyyMMdd"),
                 StartTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, atlanticTimeZone).ToString("hh:mm:ss")
             };
 
@@ -71,7 +71,7 @@ namespace BusTripUpdate
                 //TripId = route == IStopInfoReader.Route.Windward ? "FW_1" : "FL_1",
                 ScheduleRelationship = TripDescriptor.Types.ScheduleRelationship.Added,
                 RouteId = route == IStopInfoReader.Route.Windward ? "42" : "52",
-                StartDate = DateTime.Today.ToString("YYYYMMDD"),
+                StartDate = DateTime.Today.ToString("yyyyMMdd"),
                 StartTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, atlanticTimeZone).ToString("hh:mm:ss")
             };
 
