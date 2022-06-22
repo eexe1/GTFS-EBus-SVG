@@ -55,7 +55,7 @@ namespace BusTripUpdate
             TripDescriptor tripDescriptor1 = new()
             {
                 //use the first trip of each direction as a reference
-                //TripId = route == IStopInfoReader.Route.Windward ? "WF_1" : "LF_1",
+                TripId = route == IStopInfoReader.Route.Windward ? "WF_1" : "LF_1",
                 ScheduleRelationship = TripDescriptor.Types.ScheduleRelationship.Added,
                 RouteId = route == IStopInfoReader.Route.Windward ? "41" : "51",
                 StartDate = DateTime.Today.ToString("yyyyMMdd"),
@@ -68,7 +68,7 @@ namespace BusTripUpdate
             TripDescriptor tripDescriptor2 = new()
             {
                 //use the first trip of each direction as a reference
-                //TripId = route == IStopInfoReader.Route.Windward ? "FW_1" : "FL_1",
+                TripId = route == IStopInfoReader.Route.Windward ? "FW_1" : "FL_1",
                 ScheduleRelationship = TripDescriptor.Types.ScheduleRelationship.Added,
                 RouteId = route == IStopInfoReader.Route.Windward ? "42" : "52",
                 StartDate = DateTime.Today.ToString("yyyyMMdd"),
