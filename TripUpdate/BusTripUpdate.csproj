@@ -175,6 +175,8 @@
     <None Remove="Tests\obj\TripTest.csproj.nuget.g.props" />
     <None Remove="Tests\obj\TripTest.csproj.nuget.g.targets" />
     <None Remove="Tests\obj\TripTest.csproj.nuget.dgspec.json" />
+    <None Remove="TimeTable\" />
+    <None Remove="Utilities\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Reader\obj\Debug\netcoreapp3.1\.NETCoreApp,Version=v3.1.AssemblyAttributes.cs" />
@@ -188,12 +190,26 @@
   <ItemGroup>
     <Folder Include="ReferenceData\" />
     <Folder Include="StopInfo\" />
+    <Folder Include="TimeTable\" />
+    <Folder Include="Utilities\" />
   </ItemGroup>
   <ItemGroup>
     <None Update="ReferenceData\stop-windward-map.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="ReferenceData\stop-leeward-map.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ReferenceData\stop_times.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="appsetting.development">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="appsetting.development.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="app.development.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

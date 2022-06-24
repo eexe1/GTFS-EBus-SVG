@@ -15,18 +15,18 @@ namespace Reader
             // Call asynchronous network methods in a try/catch block to handle exceptions.
             try
             {
-                var byteArray = await client.GetByteArrayAsync("http://127.0.0.1:8080?route=" + args[0]);
+                var byteArray = await client.GetByteArrayAsync("https://us-east1-svg-ebus-realtime-gtfs.cloudfunctions.net/gtfs-trip-update?route=" + args[0]);
                 
                 FeedMessage feedMessage = FeedMessage.Parser.ParseFrom(byteArray);
 
                 foreach (FeedEntity entity in feedMessage.Entity)
                 {
-                    Console.WriteLine(entity.TripUpdate.Trip.TripId);
-                    Console.WriteLine(entity.TripUpdate.StopTimeUpdate.Count);
+                    Console.WriteLine("Trip ID: {0}", entity.TripUpdate.Trip.TripId);
+                    Console.WriteLine("Total update in this trip: {0}", entity.TripUpdate.StopTimeUpdate.Count);
                     foreach (TripUpdate.Types.StopTimeUpdate update in entity.TripUpdate.StopTimeUpdate)
                     {
-                        Console.WriteLine(update.StopId);
-                        Console.WriteLine(update.Arrival.Time);
+                        Console.WriteLine("Stop ID: {0}", update.StopId);
+                        Console.WriteLine("Arrival Timie: {0}", update.Arrival.Time);
                     }
                 }
 
