@@ -106,19 +106,23 @@ namespace BusTripUpdate
 
                 list.ForEach(delegate (TimeTableStopInformation info)
                 {
-                    // This is in AST time
-                    var value = String.Format("{0}-4:00", info.arrivalTime);
-                    var fixedArrivalTime = DateTime.ParseExact(value, "H:mm:sszzz", provider);
-                    // compare with current time
-
-                    var difference = estimateTime.Subtract(fixedArrivalTime).TotalMinutes;
-
-                    if (difference < min && difference > 0)
-                    {
-                        min = difference;
-                        result = info.tripId;
-                    }
                     
+                    if (direction == info.direction)
+                    {
+                        // This is in AST time
+                        var value = String.Format("{0}-4:00", info.arrivalTime);
+                        var fixedArrivalTime = DateTime.ParseExact(value, "H:mm:sszzz", provider);
+                        // compare with current time
+
+                        var difference = estimateTime.Subtract(fixedArrivalTime).TotalMinutes;
+
+                        if (difference < min && difference > 0)
+                        {
+                            min = difference;
+                            result = info.tripId;
+                        }
+                    } 
+
                 });
             }
 

@@ -36,7 +36,7 @@ namespace BusTripUpdate.Utilities
                 atlanticTimeZone = TimeZoneInfo.FindSystemTimeZoneById("America/St_Vincent");
             }
 
-            return  TimeZoneInfo.ConvertTime(DateTime.Now, atlanticTimeZone);
+            return TimeZoneInfo.ConvertTime(DateTime.Now, atlanticTimeZone);
         }
 
     }
