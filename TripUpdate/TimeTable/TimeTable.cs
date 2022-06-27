@@ -16,7 +16,7 @@ namespace BusTripUpdate
         public string tripId;
         public string arrivalTime;
         public Direction direction;
-        
+
     }
 
     public class TimeTable
@@ -106,22 +106,28 @@ namespace BusTripUpdate
 
                 list.ForEach(delegate (TimeTableStopInformation info)
                 {
-                    
+
                     if (direction == info.direction)
                     {
-                        // This is in AST time
-                        var value = String.Format("{0}-4:00", info.arrivalTime);
-                        var fixedArrivalTime = DateTime.ParseExact(value, "H:mm:sszzz", provider);
-                        // compare with current time
-
-                        var difference = estimateTime.Subtract(fixedArrivalTime).TotalMinutes;
-
-                        if (difference < min && difference > 0)
+                        // Sunday schedule
+                        if (estimateTime.DayOfWeek == DayOfWeek.Sunday && info.tripId.Contains("S")
+                            || estimateTime.DayOfWeek != DayOfWeek.Sunday && !info.tripId.Contains("S"))
                         {
-                            min = difference;
-                            result = info.tripId;
+                            // This is in AST time
+                            var value = String.Format("{0}-4:00", info.arrivalTime);
+                            var fixedArrivalTime = DateTime.ParseExact(value, "H:mm:sszzz", provider);
+                            // compare with current time
+
+                            var difference = estimateTime.Subtract(fixedArrivalTime).TotalMinutes;
+
+                            if (difference < min && difference > 0)
+                            {
+                                min = difference;
+                                result = info.tripId;
+                            }
                         }
-                    } 
+
+                    }
 
                 });
             }

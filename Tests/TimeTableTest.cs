@@ -35,10 +35,10 @@ namespace Tests
         {
             var timeTable = TimeTable.GetTimeTable();
             CultureInfo provider = CultureInfo.InvariantCulture;
-            var estimateTime = DateTime.ParseExact("16:57:35-4:00", "H:mm:sszzz", provider);
+            var estimateTime = DateTime.ParseExact("14:20:26-4:00", "H:mm:sszzz", provider);
 
-            var result = timeTable.FindNearestTripId("29_88", estimateTime, TimeTableStopInformation.Direction.Inbound);
-            Assert.AreEqual("FW_6", result);
+            var result = timeTable.FindNearestTripId("11", estimateTime, TimeTableStopInformation.Direction.Inbound);
+            Assert.AreEqual("FW_3", result);
         }
 
     }
