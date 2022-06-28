@@ -44,6 +44,7 @@ namespace BusTripUpdate
             IStopInfoReader.Route route = reader.GetRoute();
 
             var timeTable = TimeTable.GetTimeTable();
+            timeTable.logger = _logger;
 
             // keyed by tripId
             Dictionary<string, TripUpdate> tripPairs= new();
@@ -60,12 +61,11 @@ namespace BusTripUpdate
                     continue;
                 }
 
-                var currentTime = TimeHelper.CurrentTimeInAST();
-                var estimateDateTime = currentTime.AddSeconds(arrivalInterval);
+                var estimateDateTime = DateTime.UtcNow.AddSeconds(arrivalInterval);
 
-                _logger.LogInformation("Current Time in AST: {0}, Estimate Date Time {1}, direction: {2}", currentTime, estimateDateTime, stop.Direction);
                 var tripId = timeTable.FindNearestTripId(sid, estimateDateTime, stop.Direction);
                 _logger.LogInformation("Trip Id: {0}", tripId);
+
 
                 if (tripId is null)
                 {

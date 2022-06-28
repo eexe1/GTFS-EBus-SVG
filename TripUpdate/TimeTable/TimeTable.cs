@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using BusTripUpdate.StopInfo;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualBasic.FileIO;
 
 namespace BusTripUpdate
@@ -26,6 +28,9 @@ namespace BusTripUpdate
         {
             dictionary = new Dictionary<string, List<TimeTableStopInformation>>();
         }
+#nullable enable
+        public ILogger? logger;
+#nullable disable
 
         // stopId as key
         public Dictionary<string, List<TimeTableStopInformation>> dictionary;
@@ -90,7 +95,6 @@ namespace BusTripUpdate
             return timeTable;
         }
 #nullable enable
-        // estimate time should be in AST
         public string? FindNearestTripId(string stopId, DateTime estimateTime, TimeTableStopInformation.Direction direction)
         {
 
@@ -98,7 +102,7 @@ namespace BusTripUpdate
 
             if (dictionary.TryGetValue(stopId, out List<TimeTableStopInformation>? list))
             {
-                CultureInfo provider = CultureInfo.InvariantCulture;
+                CultureInfo provider = CultureInfo.CurrentCulture;
 
                 // arrival time must not be later than the fixed arrival time by x minutes.
                 // otherwise, it is considered an inconceivable estimate.
@@ -114,8 +118,8 @@ namespace BusTripUpdate
                             || estimateTime.DayOfWeek != DayOfWeek.Sunday && !info.tripId.Contains("S"))
                         {
                             // This is in AST time
-                            var value = String.Format("{0}-4:00", info.arrivalTime);
-                            var fixedArrivalTime = DateTime.ParseExact(value, "H:mm:sszzz", provider);
+                            var value = String.Format("{0}-04", info.arrivalTime);
+                            var fixedArrivalTime = DateTime.ParseExact(value, "H:mm:sszz", provider);
                             // compare with current time
 
                             var difference = estimateTime.Subtract(fixedArrivalTime).TotalMinutes;

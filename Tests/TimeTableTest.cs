@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Globalization;
 using BusTripUpdate;
-using BusTripUpdate.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Tests
@@ -28,17 +27,6 @@ namespace Tests
 
             var result = timeTable.FindNearestTripId("29_88", estimateTime, TimeTableStopInformation.Direction.Outbound);
             Assert.AreEqual("WF_10", result);
-        }
-
-        [TestMethod]
-        public void TestFindNearestTripId3()
-        {
-            var timeTable = TimeTable.GetTimeTable();
-            CultureInfo provider = CultureInfo.InvariantCulture;
-            var estimateTime = DateTime.ParseExact("14:20:26-4:00", "H:mm:sszzz", provider);
-
-            var result = timeTable.FindNearestTripId("11", estimateTime, TimeTableStopInformation.Direction.Inbound);
-            Assert.AreEqual("FW_3", result);
         }
 
     }
