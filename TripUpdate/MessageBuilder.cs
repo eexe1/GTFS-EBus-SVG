@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Threading.Tasks;
 using BusTripUpdate.StopInfo;
-using BusTripUpdate.Utilities;
-using Google.Protobuf;
 using Microsoft.Extensions.Logging;
 using TransitRealtime;
 namespace BusTripUpdate
