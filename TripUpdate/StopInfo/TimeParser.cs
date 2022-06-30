@@ -48,7 +48,7 @@ namespace BusTripUpdate.StopInfo
 		public static long ToEpoch(long seconds)
         {
 
-			long timestamp = (long)DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
+			long timestamp = (long)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
 
 			return timestamp + seconds;
 

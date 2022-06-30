@@ -11,9 +11,13 @@ namespace BusTripUpdate.StopInfo
         {
         }
 
+        public string fileUrl = @"./TestData/stopinfo.json";
+
+        public IStopInfoReader.Route route = IStopInfoReader.Route.Windward;
+
         public IStopInfoReader.Route GetRoute()
         {
-            return IStopInfoReader.Route.Windward;
+            return route;
         }
 
         Task<List<StopInfo>> IStopInfoReader.RetrieveStopInfoAsync()
@@ -21,7 +25,7 @@ namespace BusTripUpdate.StopInfo
 
             var task = new Task<List<StopInfo>>(() =>
             {
-                string jsonString = File.ReadAllText(@"./TestData/stopinfo.json");
+                string jsonString = File.ReadAllText(fileUrl);
 
                 var serializeOptions = new JsonSerializerOptions
                 {

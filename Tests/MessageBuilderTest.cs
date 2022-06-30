@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using BusTripUpdate;
 using BusTripUpdate.StopInfo;
 using Google.Protobuf;
@@ -33,6 +34,28 @@ namespace Tests
             //    }
 
             //}
+        }
+
+        [TestMethod]
+        public async Task TestLeewardStops()
+        {
+            SampleStopInfoReader reader = new();
+            reader.fileUrl = @"./TestData/stopInfoLeeward.json";
+            reader.route = IStopInfoReader.Route.Leeward;
+            var logger = NullLogger.Instance;
+            MessageBuilder messageBuilder = new(logger, reader);
+            var message = await messageBuilder.GetStopInfoMessage();
+            var result = message.ToByteArray();
+
+            FeedMessage feedMessage = FeedMessage.Parser.ParseFrom(result);
+            foreach (FeedEntity entity in feedMessage.Entity)
+            {
+                for (int i = 0; i < entity.TripUpdate.StopTimeUpdate.Count; i++)
+                {
+                    Console.WriteLine("TripID: {0}, SID: {1}, Arrival {2}", entity.TripUpdate.Trip.TripId, entity.TripUpdate.StopTimeUpdate[i].StopId, entity.TripUpdate.StopTimeUpdate[i].Arrival);
+                }
+
+            }
         }
 
     }

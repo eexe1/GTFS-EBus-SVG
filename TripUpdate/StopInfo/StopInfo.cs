@@ -1,11 +1,13 @@
-﻿using static BusTripUpdate.TimeTableStopInformation;
+﻿using System;
+using static BusTripUpdate.TimeTableStopInformation;
 
 namespace BusTripUpdate.StopInfo
 {
     public class StopInfo
     {
-        // Stop sequence
+        // Route Id: 4 is Windward, 5 is Leeward
         public int Id { get; set; }
+        // Stop sequence
         public int Seq { get; set; }
         public string Est { get; set; }
 
@@ -14,7 +16,7 @@ namespace BusTripUpdate.StopInfo
             get
             {
                 // Windward
-                if (Id <= Constants.windwardEoSId || Id == Constants.windwardExceptionSId)
+                if (Id == Constants.windwardRouteId)
                 {
                     if (Seq > Constants.windwardEoS)
                     {
@@ -22,15 +24,20 @@ namespace BusTripUpdate.StopInfo
                     }
 
                     return Direction.Outbound;
-                } else
+                } else if (Id == Constants.leewardRouteId)
                 // Leeward
                 {
+                    
                     if (Seq > Constants.leewardEoS)
                     {
                         return Direction.Inbound;
                     }
 
                     return Direction.Outbound;
+                }
+                else
+                {
+                    throw new NotSupportedException(message: "Unable to get direction");
                 }
             }
         }

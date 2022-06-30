@@ -57,17 +57,20 @@ namespace BusTripUpdate
                     // invalid estimate
                     continue;
                 }
-
                 var estimateDateTime = DateTime.UtcNow.AddSeconds(arrivalInterval);
 
                 var tripId = timeTable.FindNearestTripId(sid, estimateDateTime, stop.Direction);
-                _logger.LogInformation("Trip Id: {0}", tripId);
-
 
                 if (tripId is null)
                 {
                     // invalid tripId
+                    _logger.LogInformation("Unable to find a trip for sid:{0}, direction:{1}, estimateDateTime:{2}",
+                        tripId, stop.Direction, estimateDateTime);
                     continue;
+                } else
+                {
+                    _logger.LogInformation("Trip Id {3} for sid:{0}, direction:{1}, estimateDateTime:{2}",
+                        tripId, stop.Direction, estimateDateTime, tripId);
                 }
 
                 // add Trip Update to the dict
@@ -114,7 +117,7 @@ namespace BusTripUpdate
             var header = new FeedHeader
             {
                 GtfsRealtimeVersion = "2",
-                Timestamp = (ulong)DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalSeconds
+                Timestamp = (ulong)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds
             };
 
             message.Header = header;

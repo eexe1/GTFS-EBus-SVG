@@ -94,6 +94,7 @@ namespace BusTripUpdate
 
             return timeTable;
         }
+        // estimateTime in UTC
 #nullable enable
         public string? FindNearestTripId(string stopId, DateTime estimateTime, TimeTableStopInformation.Direction direction)
         {
@@ -111,19 +112,22 @@ namespace BusTripUpdate
                 list.ForEach(delegate (TimeTableStopInformation info)
                 {
 
-                    if (direction == info.direction)
+                if (direction == info.direction)
+                {
+
+                    // Sunday schedule
+                    if (estimateTime.DayOfWeek == DayOfWeek.Sunday && info.tripId.Contains("S")
+                        || estimateTime.DayOfWeek != DayOfWeek.Sunday && !info.tripId.Contains("S"))
                     {
-                        // Sunday schedule
-                        if (estimateTime.DayOfWeek == DayOfWeek.Sunday && info.tripId.Contains("S")
-                            || estimateTime.DayOfWeek != DayOfWeek.Sunday && !info.tripId.Contains("S"))
-                        {
+
                             // This is in AST time
-                            var value = String.Format("{0}-04", info.arrivalTime);
-                            var fixedArrivalTime = DateTime.ParseExact(value, "H:mm:sszz", provider);
+                            var value = String.Format("{0}-04:00", info.arrivalTime);
+                            var fixedArrivalTime = DateTime.ParseExact(value, "H:mm:sszzz", provider).ToUniversalTime();
                             // compare with current time
 
-                            var difference = estimateTime.Subtract(fixedArrivalTime).TotalMinutes;
-
+                            // make sure two times are in UTC
+                            var difference = estimateTime.Subtract(fixedArrivalTime).TotalMinutes;;
+                            // expect bus is delayed
                             if (difference < min && difference > 0)
                             {
                                 min = difference;
