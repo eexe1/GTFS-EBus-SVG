@@ -86,6 +86,7 @@ namespace BusTripUpdate
                         TripId = tripId,
                         ScheduleRelationship = TripDescriptor.Types.ScheduleRelationship.Scheduled
                     };
+                    var busSId = reader.FindSIDBySeq(bus.Seq.ToString(), route);
                     VehiclePosition p = new()
                     {
                         Trip = tripDescriptor,
@@ -96,8 +97,10 @@ namespace BusTripUpdate
                             Latitude = bus.Lat,
                             Longitude = bus.Lon
                         },
-                        Timestamp = (ulong)bus.Tm
+                        Timestamp = (ulong)bus.Tm,
+                        StopId = busSId
                     };
+                    _logger.LogInformation("Vehicle going to: sid {0}", busSId);
 
 
                     if (!busPairs.ContainsKey(bus.No))
