@@ -95,7 +95,8 @@ namespace BusTripUpdate
                         {
                             Latitude = bus.Lat,
                             Longitude = bus.Lon
-                        }
+                        },
+                        Timestamp = (ulong)bus.Tm
                     };
 
 
