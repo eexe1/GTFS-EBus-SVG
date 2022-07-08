@@ -91,7 +91,7 @@ namespace BusTripUpdate
                     {
                         Trip = tripDescriptor,
                         Vehicle = new VehicleDescriptor
-                        { LicensePlate = bus.No, Label = bus.Alias },
+                        { LicensePlate = bus.No, Label = bus.Alias, Id = bus.No },
                         Position = new Position
                         {
                             Latitude = bus.Lat,
