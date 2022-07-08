@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using BusTripUpdate.StopInfo;
 using Microsoft.Extensions.Logging;
 using TransitRealtime;
+using static BusTripUpdate.StopInfo.StopInfo;
+
 namespace BusTripUpdate
 {
     public class MessageBuilder
@@ -46,6 +48,9 @@ namespace BusTripUpdate
             // keyed by tripId
             Dictionary<string, TripUpdate> tripPairs= new();
 
+            // keyed by busNo
+            Dictionary<string, VehiclePosition> busPairs = new();
+
             // iterate the stop list to append a stopTimeUpdate event to a trip
             foreach (StopInfo.StopInfo stop in stopList)
             {
@@ -72,6 +77,33 @@ namespace BusTripUpdate
                     _logger.LogInformation("Trip Id {3} for sid:{0}, direction:{1}, estimateDateTime:{2}",
                         tripId, stop.Direction, estimateDateTime, tripId);
                 }
+
+
+                foreach (BusInfo bus in stop.Bnoes)
+                {
+                    TripDescriptor tripDescriptor = new()
+                    {
+                        TripId = tripId,
+                        ScheduleRelationship = TripDescriptor.Types.ScheduleRelationship.Scheduled
+                    };
+                    VehiclePosition p = new()
+                    {
+                        Trip = tripDescriptor,
+                        Vehicle = new VehicleDescriptor
+                        { LicensePlate = bus.No, Label = bus.Alias },
+                        Position = new Position
+                        {
+                            Latitude = bus.Lat,
+                            Longitude = bus.Lon
+                        }
+                    };
+
+                    if (!busPairs.ContainsKey(bus.No))
+                    {
+                        busPairs.Add(bus.No, p);
+                    }
+                }
+
 
                 // add Trip Update to the dict
                 if (!tripPairs.ContainsKey(tripId))
@@ -104,6 +136,12 @@ namespace BusTripUpdate
             foreach (KeyValuePair<string, TripUpdate> item in tripPairs)
             {
                 FeedEntity entity = new() { Id = Guid.NewGuid().ToString(), TripUpdate = item.Value };
+                feedEntities.Add(entity);
+            }
+
+            foreach (KeyValuePair<string, VehiclePosition> item in busPairs)
+            {
+                FeedEntity entity = new() { Id = Guid.NewGuid().ToString(), Vehicle = item.Value };
                 feedEntities.Add(entity);
             }
 
