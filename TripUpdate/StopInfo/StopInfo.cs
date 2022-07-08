@@ -12,8 +12,8 @@ namespace BusTripUpdate.StopInfo
             public float Lat { get; set; }
             public float Lon { get; set; }
             public float Tm { get; set; }
-            public string Sid { get; set; }
-            public string Seq { get; set; }
+            public int Sid { get; set; }
+            public int Seq { get; set; }
             public string Alias { get; set; }
         }
 
@@ -23,7 +23,7 @@ namespace BusTripUpdate.StopInfo
         public int Seq { get; set; }
         public string Est { get; set; }
 
-        public BusInfo[] Bnoes { get; set; }
+        public BusInfo[] Bno { get; set; }
 
         public Direction Direction
         {

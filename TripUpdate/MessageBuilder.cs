@@ -79,7 +79,7 @@ namespace BusTripUpdate
                 }
 
 
-                foreach (BusInfo bus in stop.Bnoes)
+                foreach (BusInfo bus in stop.Bno)
                 {
                     TripDescriptor tripDescriptor = new()
                     {
@@ -97,6 +97,7 @@ namespace BusTripUpdate
                             Longitude = bus.Lon
                         }
                     };
+
 
                     if (!busPairs.ContainsKey(bus.No))
                     {
