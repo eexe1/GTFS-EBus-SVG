@@ -11,7 +11,7 @@ namespace BusTripUpdate.StopInfo
             public string No { get; set; }
             public float Lat { get; set; }
             public float Lon { get; set; }
-            public float Tm { get; set; }
+            public float? Tm { get; set; }
             public int Sid { get; set; }
             public int Seq { get; set; }
             public string Alias { get; set; }

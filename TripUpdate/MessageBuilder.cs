@@ -87,6 +87,22 @@ namespace BusTripUpdate
                         ScheduleRelationship = TripDescriptor.Types.ScheduleRelationship.Scheduled
                     };
                     var busSId = reader.FindSIDBySeq(bus.Seq.ToString(), route);
+                    if (bus.Tm == null)
+                    {
+                        _logger.LogInformation("Vehicle missing timestamp", busSId);
+                        break;
+                    }
+
+                    var busTimestamp = (ulong)bus.Tm;
+
+                    var currentTimestamp = (ulong)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
+
+                    if (currentTimestamp - busTimestamp > 15 * 60)
+                    {
+                        // stale if older than 15 mins.
+                        break;
+                    }
+
                     VehiclePosition p = new()
                     {
                         Trip = tripDescriptor,
@@ -100,6 +116,8 @@ namespace BusTripUpdate
                         Timestamp = (ulong)bus.Tm,
                         StopId = busSId
                     };
+
+                    
                     _logger.LogInformation("Vehicle going to: sid {0}", busSId);
 
 
