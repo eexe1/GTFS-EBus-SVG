@@ -79,53 +79,53 @@ namespace BusTripUpdate
                 }
 
 
-                foreach (BusInfo bus in stop.Bno)
-                {
-                    TripDescriptor tripDescriptor = new()
-                    {
-                        TripId = tripId,
-                        ScheduleRelationship = TripDescriptor.Types.ScheduleRelationship.Scheduled
-                    };
-                    var busSId = reader.FindSIDBySeq(bus.Seq.ToString(), route);
-                    if (bus.Tm == null)
-                    {
-                        _logger.LogInformation("Vehicle missing timestamp", busSId);
-                        break;
-                    }
+                //foreach (BusInfo bus in stop.Bno)
+                //{
+                //    TripDescriptor tripDescriptor = new()
+                //    {
+                //        TripId = tripId,
+                //        ScheduleRelationship = TripDescriptor.Types.ScheduleRelationship.Scheduled
+                //    };
+                //    var busSId = reader.FindSIDBySeq(bus.Seq.ToString(), route);
+                //    if (bus.Tm == null)
+                //    {
+                //        _logger.LogInformation("Vehicle missing timestamp", busSId);
+                //        break;
+                //    }
 
-                    var busTimestamp = (ulong)bus.Tm;
+                //    var busTimestamp = (ulong)bus.Tm;
 
-                    var currentTimestamp = (ulong)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
+                //    var currentTimestamp = (ulong)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
 
-                    if (currentTimestamp - busTimestamp > 15 * 60)
-                    {
-                        // stale if older than 15 mins.
-                        break;
-                    }
+                //    if (currentTimestamp - busTimestamp > 15 * 60)
+                //    {
+                //        // stale if older than 15 mins.
+                //        break;
+                //    }
 
-                    VehiclePosition p = new()
-                    {
-                        Trip = tripDescriptor,
-                        Vehicle = new VehicleDescriptor
-                        { LicensePlate = bus.No, Label = bus.Alias, Id = bus.No },
-                        Position = new Position
-                        {
-                            Latitude = bus.Lat,
-                            Longitude = bus.Lon
-                        },
-                        Timestamp = (ulong)bus.Tm,
-                        StopId = busSId
-                    };
+                //    VehiclePosition p = new()
+                //    {
+                //        Trip = tripDescriptor,
+                //        Vehicle = new VehicleDescriptor
+                //        { LicensePlate = bus.No, Label = bus.Alias, Id = bus.No },
+                //        Position = new Position
+                //        {
+                //            Latitude = bus.Lat,
+                //            Longitude = bus.Lon
+                //        },
+                //        Timestamp = (ulong)bus.Tm,
+                //        StopId = busSId
+                //    };
 
                     
-                    _logger.LogInformation("Vehicle going to: sid {0}", busSId);
+                //    _logger.LogInformation("Vehicle going to: sid {0}", busSId);
 
 
-                    if (!busPairs.ContainsKey(bus.No))
-                    {
-                        busPairs.Add(bus.No, p);
-                    }
-                }
+                //    if (!busPairs.ContainsKey(bus.No))
+                //    {
+                //        busPairs.Add(bus.No, p);
+                //    }
+                //}
 
 
                 // add Trip Update to the dict
@@ -162,11 +162,11 @@ namespace BusTripUpdate
                 feedEntities.Add(entity);
             }
 
-            foreach (KeyValuePair<string, VehiclePosition> item in busPairs)
-            {
-                FeedEntity entity = new() { Id = Guid.NewGuid().ToString(), Vehicle = item.Value };
-                feedEntities.Add(entity);
-            }
+            //foreach (KeyValuePair<string, VehiclePosition> item in busPairs)
+            //{
+            //    FeedEntity entity = new() { Id = Guid.NewGuid().ToString(), Vehicle = item.Value };
+            //    feedEntities.Add(entity);
+            //}
 
             return feedEntities.ToArray();
         }
