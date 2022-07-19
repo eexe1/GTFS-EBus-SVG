@@ -4,12 +4,18 @@ using System.Threading.Tasks;
 using BusTripUpdate.StopInfo;
 using Microsoft.Extensions.Logging;
 using TransitRealtime;
-using static BusTripUpdate.StopInfo.StopInfo;
 
 namespace BusTripUpdate
 {
     public class MessageBuilder
     {
+
+        enum FeedType
+        {
+            TripUpdate,
+            VehiclePosition
+        }
+
         private readonly ILogger _logger;
         private readonly IStopInfoReader _readerA;
         private readonly IStopInfoReader _readerB;
@@ -28,7 +34,7 @@ namespace BusTripUpdate
         }
 
 #nullable enable
-        private async Task<FeedEntity[]?> GetStopInfoFeedEntity(IStopInfoReader reader)
+        private async Task<FeedEntity[]?> GetStopInfoFeedEntity(IStopInfoReader reader, FeedType type = FeedType.TripUpdate)
         {
 
             List<StopInfo.StopInfo> stopList = await reader.RetrieveStopInfoAsync();
@@ -45,10 +51,7 @@ namespace BusTripUpdate
             var timeTable = TimeTable.GetTimeTable();
             timeTable.logger = _logger;
 
-            // keyed by tripId
-            Dictionary<string, TripUpdate> tripPairs= new();
-
-            // keyed by busNo
+            Dictionary<string, TripUpdate> tripPairs = new();
             Dictionary<string, VehiclePosition> busPairs = new();
 
             // iterate the stop list to append a stopTimeUpdate event to a trip
@@ -72,84 +75,93 @@ namespace BusTripUpdate
                     _logger.LogInformation("Unable to find a trip for sid:{0}, direction:{1}, estimateDateTime:{2}",
                         tripId, stop.Direction, estimateDateTime);
                     continue;
-                } else
+                }
+                else
                 {
                     _logger.LogInformation("Trip Id {3} for sid:{0}, direction:{1}, estimateDateTime:{2}",
                         tripId, stop.Direction, estimateDateTime, tripId);
                 }
 
 
-                //foreach (BusInfo bus in stop.Bno)
-                //{
-                //    TripDescriptor tripDescriptor = new()
-                //    {
-                //        TripId = tripId,
-                //        ScheduleRelationship = TripDescriptor.Types.ScheduleRelationship.Scheduled
-                //    };
-                //    var busSId = reader.FindSIDBySeq(bus.Seq.ToString(), route);
-                //    if (bus.Tm == null)
-                //    {
-                //        _logger.LogInformation("Vehicle missing timestamp", busSId);
-                //        break;
-                //    }
-
-                //    var busTimestamp = (ulong)bus.Tm;
-
-                //    var currentTimestamp = (ulong)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
-
-                //    if (currentTimestamp - busTimestamp > 15 * 60)
-                //    {
-                //        // stale if older than 15 mins.
-                //        break;
-                //    }
-
-                //    VehiclePosition p = new()
-                //    {
-                //        Trip = tripDescriptor,
-                //        Vehicle = new VehicleDescriptor
-                //        { LicensePlate = bus.No, Label = bus.Alias, Id = bus.No },
-                //        Position = new Position
-                //        {
-                //            Latitude = bus.Lat,
-                //            Longitude = bus.Lon
-                //        },
-                //        Timestamp = (ulong)bus.Tm,
-                //        StopId = busSId
-                //    };
-
-                    
-                //    _logger.LogInformation("Vehicle going to: sid {0}", busSId);
-
-
-                //    if (!busPairs.ContainsKey(bus.No))
-                //    {
-                //        busPairs.Add(bus.No, p);
-                //    }
-                //}
-
-
-                // add Trip Update to the dict
-                if (!tripPairs.ContainsKey(tripId))
+                switch (type)
                 {
-                    TripDescriptor tripDescriptor = new()
-                    {
-                        TripId = tripId,
-                        ScheduleRelationship = TripDescriptor.Types.ScheduleRelationship.Scheduled
-                    };
-                    TripUpdate newTripUpdate = new() { Trip = tripDescriptor };
-                    tripPairs.Add(tripId, newTripUpdate);
+                    case FeedType.TripUpdate:
+
+                        // add Trip Update to the dict
+                        if (!tripPairs.ContainsKey(tripId))
+                        {
+                            TripDescriptor tripDescriptor = new()
+                            {
+                                TripId = tripId,
+                                ScheduleRelationship = TripDescriptor.Types.ScheduleRelationship.Scheduled
+                            };
+                            TripUpdate newTripUpdate = new() { Trip = tripDescriptor };
+                            tripPairs.Add(tripId, newTripUpdate);
+                        }
+
+                        long arrivalTime = TimeParser.ToEpoch(arrivalInterval);
+
+                        TripUpdate.Types.StopTimeEvent stopTimeEvent = new()
+                        {
+                            Time = arrivalTime
+                        };
+
+                        TripUpdate.Types.StopTimeUpdate stopTimeUpdate = new() { StopId = sid, Arrival = stopTimeEvent };
+                        tripPairs[tripId].StopTimeUpdate.Add(stopTimeUpdate);
+                        _logger.LogInformation("With Stop Time Update stopId: {0}, arrival: {1}", stopTimeUpdate.StopId, stopTimeUpdate.Arrival);
+
+                        break;
+                    case FeedType.VehiclePosition:
+                        foreach (StopInfo.StopInfo.BusInfo bus in stop.Bno)
+                        {
+                            TripDescriptor tripDescriptor = new()
+                            {
+                                TripId = tripId,
+                                ScheduleRelationship = TripDescriptor.Types.ScheduleRelationship.Scheduled
+                            };
+                            var busSId = reader.FindSIDBySeq(bus.Seq.ToString(), route);
+                            if (bus.Tm == null)
+                            {
+                                _logger.LogInformation("Vehicle missing timestamp", busSId);
+                                break;
+                            }
+
+                            var busTimestamp = (ulong)bus.Tm;
+
+                            var currentTimestamp = (ulong)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
+
+                            if (currentTimestamp - busTimestamp > 15 * 60)
+                            {
+                                // stale if older than 15 mins.
+                                break;
+                            }
+
+                            VehiclePosition p = new()
+                            {
+                                Trip = tripDescriptor,
+                                Vehicle = new VehicleDescriptor
+                                { LicensePlate = bus.No, Label = bus.Alias, Id = bus.No },
+                                Position = new Position
+                                {
+                                    Latitude = bus.Lat,
+                                    Longitude = bus.Lon
+                                },
+                                Timestamp = (ulong)bus.Tm,
+                                StopId = busSId
+                            };
+
+
+                            _logger.LogInformation("Vehicle going to: sid {0}", busSId);
+
+
+                            if (!busPairs.ContainsKey(bus.No))
+                            {
+                                busPairs.Add(bus.No, p);
+                            }
+                        }
+                        break;
+
                 }
-
-                long arrivalTime = TimeParser.ToEpoch(arrivalInterval);
-
-                TripUpdate.Types.StopTimeEvent stopTimeEvent = new()
-                {
-                    Time = arrivalTime
-                };
-
-                TripUpdate.Types.StopTimeUpdate stopTimeUpdate = new() { StopId = sid, Arrival = stopTimeEvent };
-                tripPairs[tripId].StopTimeUpdate.Add(stopTimeUpdate);
-                _logger.LogInformation("With Stop Time Update stopId: {0}, arrival: {1}", stopTimeUpdate.StopId, stopTimeUpdate.Arrival);
 
 
             }
@@ -162,11 +174,11 @@ namespace BusTripUpdate
                 feedEntities.Add(entity);
             }
 
-            //foreach (KeyValuePair<string, VehiclePosition> item in busPairs)
-            //{
-            //    FeedEntity entity = new() { Id = Guid.NewGuid().ToString(), Vehicle = item.Value };
-            //    feedEntities.Add(entity);
-            //}
+            foreach (KeyValuePair<string, VehiclePosition> item in busPairs)
+            {
+                FeedEntity entity = new() { Id = Guid.NewGuid().ToString(), Vehicle = item.Value };
+                feedEntities.Add(entity);
+            }
 
             return feedEntities.ToArray();
         }
@@ -194,6 +206,38 @@ namespace BusTripUpdate
             if (_readerB != null)
             {
                 var entityB = await GetStopInfoFeedEntity(_readerB);
+                if (entityB is FeedEntity[] valueOfEntityB)
+                {
+                    message.Entity.Add(valueOfEntityB);
+                }
+            }
+
+            return message;
+        }
+
+        public async Task<FeedMessage> GetBusInfoMessage()
+        {
+            var message = new FeedMessage();
+
+            var header = new FeedHeader
+            {
+                GtfsRealtimeVersion = "2",
+                Timestamp = (ulong)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds
+            };
+
+            message.Header = header;
+
+            var entityA = await GetStopInfoFeedEntity(_readerA, FeedType.VehiclePosition);
+
+            if (entityA is FeedEntity[] valueOfEntityA)
+            {
+                message.Entity.Add(valueOfEntityA);
+            }
+
+
+            if (_readerB != null)
+            {
+                var entityB = await GetStopInfoFeedEntity(_readerB, FeedType.VehiclePosition);
                 if (entityB is FeedEntity[] valueOfEntityB)
                 {
                     message.Entity.Add(valueOfEntityB);

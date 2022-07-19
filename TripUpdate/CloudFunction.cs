@@ -22,17 +22,19 @@ namespace BusTripUpdate
             HttpRequest request = context.Request;
             // Check URL parameters for "route" field
             string route = request.Query["route"];
+            string feedType = request.Query["type"];
 
             var isWindward = route?.ToLower() == "windward";
             var isLeeward = route?.ToLower() == "leeward";
             var isAll = route?.ToLower() == "all";
+            var isVehiclePosition = feedType?.ToLower() == "vehicle";
 
             StopInfoReader reader;
 
             IStopInfoReader.Route routeEnum = isLeeward ? IStopInfoReader.Route.Leeward : IStopInfoReader.Route.Windward;
 
             // if route is not provided, return an error
-            if (!isWindward && !isLeeward && !isAll)
+            if (!isWindward && !isLeeward && !isAll && !isVehiclePosition)
             {
                 context.Response.StatusCode = 400;
                 var error = "Incorrect parameters, contact developers";
@@ -41,21 +43,33 @@ namespace BusTripUpdate
                 return;
             }
             FeedMessage message;
-            if (isAll)
+            if (isVehiclePosition)
             {
-                _logger.LogInformation("Start to gather stop info for both routes");
+                _logger.LogInformation("Start to gather bus info for both routes");
                 // get data from both routes
                 StopInfoReader readerA = new(IStopInfoReader.Route.Windward);
                 StopInfoReader readerB = new(IStopInfoReader.Route.Leeward);
                 MessageBuilder messageBuilder = new(_logger, readerA, readerB);
-                message = await messageBuilder.GetStopInfoMessage();
+                message = await messageBuilder.GetBusInfoMessage();
             }
             else
             {
-                reader = new(routeEnum);
-                _logger.LogInformation("Start to gather stop info for route:{0}", routeEnum);
-                MessageBuilder messageBuilder = new(_logger, reader);
-                message = await messageBuilder.GetStopInfoMessage();
+                if (isAll)
+                {
+                    _logger.LogInformation("Start to gather stop info for both routes");
+                    // get data from both routes
+                    StopInfoReader readerA = new(IStopInfoReader.Route.Windward);
+                    StopInfoReader readerB = new(IStopInfoReader.Route.Leeward);
+                    MessageBuilder messageBuilder = new(_logger, readerA, readerB);
+                    message = await messageBuilder.GetStopInfoMessage();
+                }
+                else
+                {
+                    reader = new(routeEnum);
+                    _logger.LogInformation("Start to gather stop info for route:{0}", routeEnum);
+                    MessageBuilder messageBuilder = new(_logger, reader);
+                    message = await messageBuilder.GetStopInfoMessage();
+                }
             }
 
             context.Response.StatusCode = 200;
@@ -68,6 +82,6 @@ namespace BusTripUpdate
 
             message.WriteTo(context.Response.Body);
 
-            }
+        }
     }
 }
