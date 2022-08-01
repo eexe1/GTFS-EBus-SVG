@@ -136,6 +136,11 @@ namespace BusTripUpdate
                                 break;
                             }
 
+                            if (bus.No == null || bus.Alias == null) {
+                                _logger.LogInformation("Unknown bus No or Alias");
+                                continue;
+                            }
+
                             VehiclePosition p = new()
                             {
                                 Trip = tripDescriptor,
@@ -150,9 +155,7 @@ namespace BusTripUpdate
                                 StopId = busSId
                             };
 
-
                             _logger.LogInformation("Vehicle going to: sid {0}", busSId);
-
 
                             if (!busPairs.ContainsKey(bus.No))
                             {
