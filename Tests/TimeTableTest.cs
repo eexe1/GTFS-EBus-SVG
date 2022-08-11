@@ -13,7 +13,7 @@ namespace Tests
         {
             var timeTable = TimeTable.GetTimeTable();
             CultureInfo provider = CultureInfo.InvariantCulture;
-            var estimateTime = DateTime.ParseExact("12:00:05-4:00", "H:mm:sszzz", provider);
+            var estimateTime = DateTime.ParseExact("08/04 12:00:05-4:00", "MM/dd H:mm:sszzz", provider);
             var result = timeTable.FindNearestTripId("24", estimateTime, TimeTableStopInformation.Direction.Outbound);
             Assert.AreEqual("WF_6", result);
         }
@@ -23,7 +23,7 @@ namespace Tests
         {
             var timeTable = TimeTable.GetTimeTable();
             CultureInfo provider = CultureInfo.InvariantCulture;
-            var estimateTime = DateTime.ParseExact("16:57:35-4:00", "H:mm:sszzz", provider);
+            var estimateTime = DateTime.ParseExact("08/04 16:57:35-4:00", "MM/dd H:mm:sszzz", provider);
 
             var result = timeTable.FindNearestTripId("29_88", estimateTime, TimeTableStopInformation.Direction.Outbound);
             Assert.AreEqual("WF_11", result);
