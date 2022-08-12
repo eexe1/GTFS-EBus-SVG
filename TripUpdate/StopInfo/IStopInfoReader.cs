@@ -1,14 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace BusTripUpdate.StopInfo
 {
+    /// <summary>
+    /// Interface of StopInfo reader
+    /// </summary>
     public interface IStopInfoReader
     {
 
+        /// <summary>
+        /// An async task to retrieve StopInfo
+        /// </summary>
+        /// <returns>A list of StopInfo</returns>
         Task<List<StopInfo>> RetrieveStopInfoAsync();
 
         enum Route
@@ -17,8 +23,18 @@ namespace BusTripUpdate.StopInfo
             Leeward
         }
 
+        /// <summary>
+        /// Gets the route that the reader is assigned to
+        /// </summary>
+        /// <returns></returns>
         Route GetRoute();
 
+        /// <summary>
+        /// Find Stop ID by giving a bus stop's sequence number and the route it belongs to
+        /// </summary>
+        /// <param name="seq">Bus stop's sequence number</param>
+        /// <param name="route">Bus stop's route</param>
+        /// <returns></returns>
         string FindSIDBySeq(string seq, Route route)
         {
             // read map files
@@ -27,12 +43,12 @@ namespace BusTripUpdate.StopInfo
             {
                 case Route.Windward:
                     {
-                        jsonString = File.ReadAllText(@"./ReferenceData/stop-windward-map.json");
+                        jsonString = File.ReadAllText(@"./ReferenceData/stop_windward_map.json");
                         break;
                     }
                 case Route.Leeward:
                     {
-                        jsonString = File.ReadAllText(@"./ReferenceData/stop-leeward-map.json");
+                        jsonString = File.ReadAllText(@"./ReferenceData/stop_leeward_map.json");
                         break;
                     }
             }

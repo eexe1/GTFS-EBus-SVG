@@ -5,13 +5,16 @@ using System.Threading.Tasks;
 
 namespace BusTripUpdate.StopInfo
 {
+    /// <summary>
+    /// Reader reads from local test data of StopInfo
+    /// </summary>
     public class SampleStopInfoReader : IStopInfoReader
     {
         public SampleStopInfoReader()
         {
         }
 
-        public string fileUrl = @"./TestData/stopinfo.json";
+        public string fileUrl = @"./TestData/stop_info.json";
 
         public IStopInfoReader.Route route = IStopInfoReader.Route.Windward;
 
