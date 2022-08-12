@@ -26,7 +26,7 @@
     <None Remove="TestData\" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="TestData\stopinfo.json">
+    <None Update="TestData\stop_info.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
