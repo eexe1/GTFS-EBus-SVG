@@ -50,7 +50,7 @@ namespace BusTripUpdate
                 StopInfoReader readerA = new(IStopInfoReader.Route.Windward);
                 StopInfoReader readerB = new(IStopInfoReader.Route.Leeward);
                 MessageBuilder messageBuilder = new(_logger, readerA, readerB);
-                message = await messageBuilder.GetBusInfoMessage();
+                message = await messageBuilder.GetVehiclePositionMessage();
             }
             else
             {
@@ -61,14 +61,14 @@ namespace BusTripUpdate
                     StopInfoReader readerA = new(IStopInfoReader.Route.Windward);
                     StopInfoReader readerB = new(IStopInfoReader.Route.Leeward);
                     MessageBuilder messageBuilder = new(_logger, readerA, readerB);
-                    message = await messageBuilder.GetStopInfoMessage();
+                    message = await messageBuilder.GetTripUpdateMessage();
                 }
                 else
                 {
                     reader = new(routeEnum);
                     _logger.LogInformation("Start to gather stop info for route:{0}", routeEnum);
                     MessageBuilder messageBuilder = new(_logger, reader);
-                    message = await messageBuilder.GetStopInfoMessage();
+                    message = await messageBuilder.GetTripUpdateMessage();
                 }
             }
 

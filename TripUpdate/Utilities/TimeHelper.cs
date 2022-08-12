@@ -11,14 +11,15 @@ namespace BusTripUpdate.Utilities
         {
             TimeZoneInfo atlanticTimeZone;
 
-            // Linux & MacOS machine from ICU
+            
             try
             {
+                // Windows machines
                 atlanticTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Atlantic Standard Time");
             }
             catch (TimeZoneNotFoundException)
             {
-            // Windows machines
+                // Linux & MacOS machine from ICU
                 atlanticTimeZone = TimeZoneInfo.FindSystemTimeZoneById("America/St_Vincent");
             }
 
