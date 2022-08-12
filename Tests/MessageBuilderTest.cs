@@ -18,8 +18,9 @@ namespace Tests
         {
             SampleStopInfoReader reader = new();
             var logger = NullLogger.Instance;
-            MessageBuilder messageBuilder = new(logger, reader);
-            var message = await messageBuilder.GetStopInfoMessage();
+            IStopInfoReader[] readers = { reader };
+            MessageBuilder messageBuilder = new(logger, readers);
+            var message = await messageBuilder.GetTripUpdateMessage();
             var result = message.ToByteArray();
 
             // decode protocol buffer message
