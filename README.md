@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/gh/eexe1/GTFS-EBus-SVG/branch/main/graph/badge.svg?token=LELOKIV42K)](https://codecov.io/gh/eexe1/GTFS-EBus-SVG)
+
 # Introduction
 
 GTFS-EBus-SVG is built for the Saint Vincent and the Grenadines E-Bus system. It brings the real-time bus information to the Google Transit. Therefore, users on Google Map can see the real-time arrival for buses. The application is built in .Net Core 3.1 and runs on Google Cloud Function.
