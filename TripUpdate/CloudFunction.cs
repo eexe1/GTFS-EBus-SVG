@@ -29,7 +29,7 @@ namespace BusTripUpdate
             var isAll = route?.ToLower() == "all";
             var isVehiclePosition = feedType?.ToLower() == "vehicle";
 
-            StopInfoReader reader;
+            RemoteStopInfoReader reader;
 
             IStopInfoReader.Route routeEnum = isLeeward ? IStopInfoReader.Route.Leeward : IStopInfoReader.Route.Windward;
 
@@ -47,8 +47,8 @@ namespace BusTripUpdate
             {
                 _logger.LogInformation("Start to gather bus info for both routes");
                 // get data from both routes
-                StopInfoReader readerA = new(IStopInfoReader.Route.Windward);
-                StopInfoReader readerB = new(IStopInfoReader.Route.Leeward);
+                RemoteStopInfoReader readerA = new(IStopInfoReader.Route.Windward);
+                RemoteStopInfoReader readerB = new(IStopInfoReader.Route.Leeward);
                 IStopInfoReader[] readers = { readerA, readerB };
                 MessageBuilder messageBuilder = new(_logger, readers);
                 message = await messageBuilder.GetVehiclePositionMessage();
@@ -59,8 +59,8 @@ namespace BusTripUpdate
                 {
                     _logger.LogInformation("Start to gather stop info for both routes");
                     // get data from both routes
-                    StopInfoReader readerA = new(IStopInfoReader.Route.Windward);
-                    StopInfoReader readerB = new(IStopInfoReader.Route.Leeward);
+                    RemoteStopInfoReader readerA = new(IStopInfoReader.Route.Windward);
+                    RemoteStopInfoReader readerB = new(IStopInfoReader.Route.Leeward);
                     IStopInfoReader[] readers = { readerA, readerB };
                     MessageBuilder messageBuilder = new(_logger, readers);
                     message = await messageBuilder.GetTripUpdateMessage();

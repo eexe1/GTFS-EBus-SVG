@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace BusTripUpdate.StopInfo
 {
-	public class StopInfoReader: IStopInfoReader
+	public class RemoteStopInfoReader: IStopInfoReader
 	{
         public readonly IStopInfoReader.Route _route;
         private readonly HttpClient client = new();
 
-        public StopInfoReader(IStopInfoReader.Route route)
+        public RemoteStopInfoReader(IStopInfoReader.Route route)
 		{
             _route = route;
 		}
