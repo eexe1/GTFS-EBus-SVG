@@ -3,7 +3,7 @@ using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace BusTripUpdate.StopInfo
+namespace BusTripUpdate
 {
     /// <summary>
     /// Interface of StopInfo reader

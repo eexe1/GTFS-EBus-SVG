@@ -2,7 +2,6 @@ using Google.Cloud.Functions.Framework;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
-using BusTripUpdate.StopInfo;
 using TransitRealtime;
 using Google.Protobuf;
 using Microsoft.AspNetCore.Http.Features;
@@ -12,7 +11,6 @@ namespace BusTripUpdate
     public class CloudFunction : IHttpFunction
     {
         private readonly ILogger _logger;
-
 
         public CloudFunction(ILogger<CloudFunction> logger) =>
             _logger = logger;

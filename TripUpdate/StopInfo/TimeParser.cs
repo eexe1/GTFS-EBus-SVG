@@ -1,5 +1,5 @@
 ﻿using System;
-namespace BusTripUpdate.StopInfo
+namespace BusTripUpdate
 {
 	/// <summary>
     /// Parse custome time format

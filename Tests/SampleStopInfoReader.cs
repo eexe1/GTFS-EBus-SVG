@@ -3,7 +3,7 @@ using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace BusTripUpdate.StopInfo
+namespace BusTripUpdate
 {
     /// <summary>
     /// Reader reads from local test data of StopInfo

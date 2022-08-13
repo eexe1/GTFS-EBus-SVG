@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using BusTripUpdate.StopInfo;
 using Microsoft.Extensions.Logging;
 using TransitRealtime;
 
@@ -38,7 +37,7 @@ namespace BusTripUpdate
         private async Task<FeedEntity[]?> BuildFeedEntity(IStopInfoReader reader, FeedType type)
         {
 
-            List<StopInfo.StopInfo> stopList = await reader.RetrieveStopInfoAsync();
+            List<StopInfo> stopList = await reader.RetrieveStopInfoAsync();
 
             if (stopList.Count < 1)
             {
@@ -56,7 +55,7 @@ namespace BusTripUpdate
             Dictionary<string, VehiclePosition> busPairs = new();
 
             // iterate the stop list to append a stopTimeUpdate event to a trip
-            foreach (StopInfo.StopInfo stop in stopList)
+            foreach (StopInfo stop in stopList)
             {
                 long arrivalInterval = TimeParser.ParseTime(stop.Est);
                 string sid = reader.FindSIDBySeq(stop.Seq.ToString(), route);
@@ -113,7 +112,7 @@ namespace BusTripUpdate
 
                         break;
                     case FeedType.VehiclePosition:
-                        foreach (StopInfo.StopInfo.BusInfo bus in stop.Bno)
+                        foreach (StopInfo.BusInfo bus in stop.Bno)
                         {
                             TripDescriptor tripDescriptor = new()
                             {
