@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace BusTripUpdate
 {
+    /// <summary>
+    /// Read StopInfo data from the StopInfo API.
+    /// </summary>
 	public class RemoteStopInfoReader: IStopInfoReader
 	{
         public readonly IStopInfoReader.Route _route;
@@ -23,7 +26,6 @@ namespace BusTripUpdate
 
         public async Task<List<StopInfo>> RetrieveStopInfoAsync()
         {
-            // Call asynchronous network methods in a try/catch block to handle exceptions.
             try
             {
                 
