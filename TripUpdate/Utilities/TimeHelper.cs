@@ -3,15 +3,12 @@ namespace BusTripUpdate.Utilities
 {
     public class TimeHelper
     {
-        public TimeHelper()
-        {
-        }
 
         public static TimeZoneInfo GetASTZone()
         {
             TimeZoneInfo atlanticTimeZone;
 
-            
+
             try
             {
                 // Windows machines
@@ -28,7 +25,7 @@ namespace BusTripUpdate.Utilities
 
         public static DateTime CurrentTimeInAST()
         {
-          return TimeToAST(DateTime.Now);
+            return TimeToAST(DateTime.Now);
         }
 
         public static DateTime TimeToAST(DateTime dateTime)

@@ -6,10 +6,6 @@ namespace BusTripUpdate
     /// </summary>
 	public class TimeParser
 	{
-		public TimeParser()
-		{
-		}
-
 		/// <summary>
 		/// Convert time in (xh:ym:zs) format to seconds
 		/// </summary>

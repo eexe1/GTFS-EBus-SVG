@@ -1,5 +1,4 @@
-﻿using System;
-namespace BusTripUpdate
+﻿namespace BusTripUpdate
 {
 	public struct Constants
 	{
