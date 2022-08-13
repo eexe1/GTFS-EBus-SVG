@@ -194,7 +194,7 @@
     <Folder Include="Utilities\" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="ReferenceData\stop_times.txt">
+    <None Update="ReferenceData\time_table.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="appsetting.development">

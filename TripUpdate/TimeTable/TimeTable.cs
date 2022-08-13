@@ -60,7 +60,7 @@ namespace BusTripUpdate
         public static TimeTable GetTimeTable()
         {
 
-            var path = @"./ReferenceData/stop_times.txt";
+            var path = @"./ReferenceData/time_table.txt";
             using TextFieldParser csvParser = new(path);
             csvParser.CommentTokens = new string[] { "#" };
             csvParser.SetDelimiters(new string[] { "," });
