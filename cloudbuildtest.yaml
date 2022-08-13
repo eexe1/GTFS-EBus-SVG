@@ -1,7 +1,20 @@
 steps:
   - name: "mcr.microsoft.com/dotnet/sdk:3.1.422-bullseye"
-    entrypoint: "/bin/sh"
+    entrypoint: "bash"
+    secretEnv: ["CODECOV_TOKEN"]
     args:
-      - ./test-script.sh
+      - -c
+      - |
+        dotnet restore
+        dotnet build
+        dotnet test --collect:"XPlat Code Coverage" -- ./coverage
+        curl -Os https://uploader.codecov.io/latest/linux/codecov
+        chmod +x codecov
+        ./codecov -t $$CODECOV_TOKEN
+
+availableSecrets:
+  secretManager:
+    - versionName: projects/$PROJECT_ID/secrets/codecov_token/versions/latest
+      env: "CODECOV_TOKEN"
 options:
   logging: CLOUD_LOGGING_ONLY
