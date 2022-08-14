@@ -35,7 +35,7 @@ namespace BusTripUpdate
         /// <param name="seq">Bus stop's sequence number</param>
         /// <param name="route">Bus stop's route</param>
         /// <returns></returns>
-        string FindSIDBySeq(string seq, Route route)
+        public string FindSIDBySeq(string seq, Route route)
         {
             // read map files
             string jsonString = null;
