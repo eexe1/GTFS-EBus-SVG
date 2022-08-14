@@ -24,15 +24,15 @@ namespace BusTripUpdate
         /// <summary>
         /// Trip ID attached to the bus
         /// </summary>
-        public string tripId;
+        public string TripId;
         /// <summary>
         /// The scheduled arrival time
         /// </summary>
-        public string arrivalTime;
+        public string ArrivalTime;
         /// <summary>
         /// The direction of the bus
         /// </summary>
-        public Direction direction;
+        public Direction BusDirection;
 
     }
 
@@ -112,13 +112,13 @@ namespace BusTripUpdate
 
                 if (timeTable.TableDict.TryGetValue(stopId, out List<TimeTableStopInfo> list))
                 {
-                    list.Add(new TimeTableStopInfo { tripId = tripId, arrivalTime = arrivalTime, direction = direction });
+                    list.Add(new TimeTableStopInfo { TripId = tripId, ArrivalTime = arrivalTime, BusDirection = direction });
                     timeTable.TableDict[stopId] = list;
                 }
                 else
                 {
                     List<TimeTableStopInfo> newList = new();
-                    newList.Add(new TimeTableStopInfo { tripId = tripId, arrivalTime = arrivalTime, direction = direction });
+                    newList.Add(new TimeTableStopInfo { TripId = tripId, ArrivalTime = arrivalTime, BusDirection = direction });
                     timeTable.TableDict[stopId] = newList;
 
                 }
@@ -155,7 +155,7 @@ namespace BusTripUpdate
                 list.ForEach(delegate (TimeTableStopInfo info)
                 {
 
-                    if (direction == info.direction)
+                    if (direction == info.BusDirection)
                     {
                         // convert to AST so Sunday trip can be identified.
                         var astTime = TimeHelper.TimeToAST(estimateTime);
@@ -164,8 +164,8 @@ namespace BusTripUpdate
                         /* Only 2 types of Schedule: Mon-Sat & Sun
                          * The condition enforces which schedule to apply
                          */
-                        if (astTime.DayOfWeek == DayOfWeek.Sunday && info.tripId.Contains("S")
-                            || astTime.DayOfWeek != DayOfWeek.Sunday && !info.tripId.Contains("S"))
+                        if (astTime.DayOfWeek == DayOfWeek.Sunday && info.TripId.Contains("S")
+                            || astTime.DayOfWeek != DayOfWeek.Sunday && !info.TripId.Contains("S"))
                         {
 
                             /* Compare time only (date component is not relevant as every day has the same timetable)
@@ -174,7 +174,7 @@ namespace BusTripUpdate
                             var minute = astTime.Minute.ToString("D2");
                             var second = astTime.Second.ToString("D2");
 
-                            var value = String.Format("{0}-04:00", info.arrivalTime);
+                            var value = String.Format("{0}-04:00", info.ArrivalTime);
                             var estimateValue = String.Format("{0}:{1}:{2}-04:00", hour, minute, second);
 
                             var fixedArrivalTime = DateTime.ParseExact(value, "H:mm:sszzz", provider).ToUniversalTime();
@@ -187,7 +187,7 @@ namespace BusTripUpdate
                             if (difference < min)
                             {
                                 min = difference;
-                                result = info.tripId;
+                                result = info.TripId;
                             }
 
                         }
