@@ -47,19 +47,6 @@ namespace BusTripUpdate
             }
 		}
 
-		/// <summary>
-        /// Returns current time + offset in Epoch format
-        /// </summary>
-        /// <param name="seconds"></param>
-        /// <returns>seconds</returns>
-		public static long ToEpoch(long offset)
-        {
-
-			long timestamp = (long)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
-
-			return timestamp + offset;
-
-		}
 	}
 }
 

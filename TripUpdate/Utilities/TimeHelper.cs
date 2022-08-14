@@ -33,5 +33,9 @@ namespace BusTripUpdate.Utilities
             return TimeZoneInfo.ConvertTime(dateTime, GetASTZone());
         }
 
+        public static DateTime TimeFromEpoch(double seconds)
+        {
+            return DateTime.UnixEpoch.AddSeconds(seconds);
+        }
     }
 }

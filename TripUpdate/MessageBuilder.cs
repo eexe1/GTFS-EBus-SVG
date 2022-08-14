@@ -25,6 +25,13 @@ namespace BusTripUpdate
         }
 
         /// <summary>
+        /// Use to override the system time for testing purposes
+        /// </summary>
+        public DateTime? CurrentTimestampOverride;
+
+        public DateTime CurrentTimestamp => CurrentTimestampOverride ?? DateTime.UtcNow;
+
+        /// <summary>
         /// Build a feed update by doing the following procedures:
         /// 1. Retrieve StopInfo data and TimeTable.
         /// 2. Find each estimate a Trip ID by referencing TimeTable.
@@ -65,7 +72,7 @@ namespace BusTripUpdate
                     // invalid estimate
                     continue;
                 }
-                var estimateDateTime = DateTime.UtcNow.AddSeconds(arrivalInterval);
+                var estimateDateTime = CurrentTimestamp.AddSeconds(arrivalInterval);
 
                 var tripId = timeTable.FindNearestTripId(sid, estimateDateTime, stop.Direction);
 
@@ -99,7 +106,7 @@ namespace BusTripUpdate
                             tripPairs.Add(tripId, newTripUpdate);
                         }
 
-                        long arrivalTime = TimeParser.ToEpoch(arrivalInterval);
+                        long arrivalTime = (long)CurrentTimestamp.Subtract(new DateTime(1970, 1, 1)).TotalSeconds + arrivalInterval;
 
                         TripUpdate.Types.StopTimeEvent stopTimeEvent = new()
                         {
@@ -112,6 +119,7 @@ namespace BusTripUpdate
 
                         break;
                     case FeedType.VehiclePosition:
+
                         foreach (StopInfo.BusInfo bus in stop.Bno)
                         {
                             TripDescriptor tripDescriptor = new()
@@ -128,7 +136,7 @@ namespace BusTripUpdate
 
                             var busTimestamp = (ulong)bus.Tm;
 
-                            var currentTimestamp = (ulong)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
+                            var currentTimestamp = (ulong)CurrentTimestamp.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
 
                             if (currentTimestamp - busTimestamp > 15 * 60)
                             {
@@ -198,7 +206,7 @@ namespace BusTripUpdate
             var header = new FeedHeader
             {
                 GtfsRealtimeVersion = "2",
-                Timestamp = (ulong)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds
+                Timestamp = (ulong)CurrentTimestamp.Subtract(new DateTime(1970, 1, 1)).TotalSeconds
             };
 
             message.Header = header;
@@ -228,7 +236,7 @@ namespace BusTripUpdate
             var header = new FeedHeader
             {
                 GtfsRealtimeVersion = "2",
-                Timestamp = (ulong)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds
+                Timestamp = (ulong)CurrentTimestamp.Subtract(new DateTime(1970, 1, 1)).TotalSeconds
             };
 
             message.Header = header;
