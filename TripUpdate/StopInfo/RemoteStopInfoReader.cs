@@ -11,8 +11,8 @@ namespace BusTripUpdate
     /// </summary>
 	public class RemoteStopInfoReader: IStopInfoReader
 	{
-        public readonly IStopInfoReader.Route _route;
-        private readonly HttpClient client = new();
+        private readonly IStopInfoReader.Route _route;
+        private readonly HttpClient _client = new();
 
         public RemoteStopInfoReader(IStopInfoReader.Route route)
 		{
@@ -41,7 +41,7 @@ namespace BusTripUpdate
                         break;
                 }
 
-                string jsonString = await client.GetStringAsync(url);
+                string jsonString = await _client.GetStringAsync(url);
 
                 var serializeOptions = new JsonSerializerOptions
                 {

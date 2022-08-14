@@ -56,7 +56,7 @@ namespace BusTripUpdate
             IStopInfoReader.Route route = reader.GetRoute();
 
             var timeTable = TimeTable.GetTimeTable();
-            timeTable.logger = _logger;
+            timeTable.Logger = _logger;
 
             Dictionary<string, TripUpdate> tripPairs = new();
             Dictionary<string, VehiclePosition> busPairs = new();

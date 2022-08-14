@@ -1,5 +1,5 @@
 ﻿using System;
-using static BusTripUpdate.TimeTableStopInformation;
+using static BusTripUpdate.TimeTableStopInfo;
 
 namespace BusTripUpdate
 {
@@ -16,6 +16,9 @@ namespace BusTripUpdate
             public float Lat { get; set; }
             public float Lon { get; set; }
             public double? Tm { get; set; }
+            /// <summary>
+            /// Sid from the eBus system is not usable as our Stop ID is different
+            /// </summary>
             public int Sid { get; set; }
             public int Seq { get; set; }
             public string Alias { get; set; }

@@ -8,9 +8,9 @@ using Microsoft.VisualBasic.FileIO;
 namespace BusTripUpdate
 {
     /// <summary>
-    /// Models an arriving bus at a stop.
+    /// Models an arriving bus at a stop in Time Table.
     /// </summary>
-    public class TimeTableStopInformation
+    public class TimeTableStopInfo
     {
         /// <summary>
         /// Inbound (returning to Kingstown);
@@ -41,24 +41,33 @@ namespace BusTripUpdate
     /// </summary>
     public class TimeTable
     {
+        /// <summary>
+        /// Singleton of TimeTable.
+        /// </summary>
+        private static TimeTable _instance;
 
         public TimeTable()
         {
-            dictionary = new Dictionary<string, List<TimeTableStopInformation>>();
+            TableDict = new Dictionary<string, List<TimeTableStopInfo>>();
         }
 #nullable enable
-        public ILogger? logger;
+        public ILogger? Logger;
 #nullable disable
 
         /// <value>Stores TimeTable information keyed by StopId. Each stop has a list of bus arriving information</value> 
-        public Dictionary<string, List<TimeTableStopInformation>> dictionary;
+        public Dictionary<string, List<TimeTableStopInfo>> TableDict;
 
         /// <summary>
-        /// Gets a TimieTable instance
+        /// Returns the TimieTable instance.
         /// </summary>
         /// <returns>TimeTable</returns>
         public static TimeTable GetTimeTable()
         {
+
+            if (_instance != null)
+            {
+                return _instance;
+            }
 
             var path = @"./ReferenceData/time_table.txt";
             using TextFieldParser csvParser = new(path);
@@ -82,14 +91,14 @@ namespace BusTripUpdate
                 string stopId = fields[3];
                 string stopSequence = fields[4];
 
-                var direction = TimeTableStopInformation.Direction.Outbound;
+                var direction = TimeTableStopInfo.Direction.Outbound;
 
                 // Leeward side
                 if (tripId.Contains("L"))
                 {
                     if (int.Parse(stopSequence) > Constants.leewardEoS)
                     {
-                        direction = TimeTableStopInformation.Direction.Inbound;
+                        direction = TimeTableStopInfo.Direction.Inbound;
                     }
                 }
                 // Windward side
@@ -97,26 +106,28 @@ namespace BusTripUpdate
                 {
                     if (int.Parse(stopSequence) > Constants.windwardEoS)
                     {
-                        direction = TimeTableStopInformation.Direction.Inbound;
+                        direction = TimeTableStopInfo.Direction.Inbound;
                     }
                 }
 
-                if (timeTable.dictionary.TryGetValue(stopId, out List<TimeTableStopInformation> list))
+                if (timeTable.TableDict.TryGetValue(stopId, out List<TimeTableStopInfo> list))
                 {
-                    list.Add(new TimeTableStopInformation { tripId = tripId, arrivalTime = arrivalTime, direction = direction });
-                    timeTable.dictionary[stopId] = list;
+                    list.Add(new TimeTableStopInfo { tripId = tripId, arrivalTime = arrivalTime, direction = direction });
+                    timeTable.TableDict[stopId] = list;
                 }
                 else
                 {
-                    List<TimeTableStopInformation> newList = new();
-                    newList.Add(new TimeTableStopInformation { tripId = tripId, arrivalTime = arrivalTime, direction = direction });
-                    timeTable.dictionary[stopId] = newList;
+                    List<TimeTableStopInfo> newList = new();
+                    newList.Add(new TimeTableStopInfo { tripId = tripId, arrivalTime = arrivalTime, direction = direction });
+                    timeTable.TableDict[stopId] = newList;
 
                 }
 
             }
 
-            return timeTable;
+            _instance = timeTable;
+
+            return _instance;
         }
 
         /** 
@@ -128,12 +139,12 @@ namespace BusTripUpdate
         <param name="direction">The direction the Trip belongs to</param>
         */
 #nullable enable
-        public string? FindNearestTripId(string stopId, DateTime estimateTime, TimeTableStopInformation.Direction direction)
+        public string? FindNearestTripId(string stopId, DateTime estimateTime, TimeTableStopInfo.Direction direction)
         {
 
             string? result = null;
 
-            if (dictionary.TryGetValue(stopId, out List<TimeTableStopInformation>? list))
+            if (TableDict.TryGetValue(stopId, out List<TimeTableStopInfo>? list))
             {
                 CultureInfo provider = CultureInfo.CurrentCulture;
 
@@ -141,7 +152,7 @@ namespace BusTripUpdate
                 // otherwise, it is considered an inconceivable estimate.
                 double min = 60;
 
-                list.ForEach(delegate (TimeTableStopInformation info)
+                list.ForEach(delegate (TimeTableStopInfo info)
                 {
 
                     if (direction == info.direction)

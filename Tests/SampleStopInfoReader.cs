@@ -10,9 +10,6 @@ namespace BusTripUpdate
     /// </summary>
     public class SampleStopInfoReader : IStopInfoReader
     {
-        public SampleStopInfoReader()
-        {
-        }
 
         public string fileUrl = @"./TestData/stop_info.json";
 
