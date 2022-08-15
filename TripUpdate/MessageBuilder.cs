@@ -113,7 +113,7 @@ namespace BusTripUpdate
                             Time = arrivalTime
                         };
 
-                        TripUpdate.Types.StopTimeUpdate stopTimeUpdate = new() { StopId = sid, Arrival = stopTimeEvent };
+                        TripUpdate.Types.StopTimeUpdate stopTimeUpdate = new() { StopId = sid, Arrival = stopTimeEvent, StopSequence = (uint) stop.Seq };
                         tripPairs[tripId].StopTimeUpdate.Add(stopTimeUpdate);
                         _logger.LogInformation("With Stop Time Update stopId: {0}, arrival: {1}", stopTimeUpdate.StopId, stopTimeUpdate.Arrival);
 

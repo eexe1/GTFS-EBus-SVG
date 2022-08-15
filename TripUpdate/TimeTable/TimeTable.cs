@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using BusTripUpdate.Utilities;
@@ -117,8 +117,10 @@ namespace BusTripUpdate
                 }
                 else
                 {
-                    List<TimeTableStopInfo> newList = new();
-                    newList.Add(new TimeTableStopInfo { TripId = tripId, ArrivalTime = arrivalTime, BusDirection = direction });
+                    List<TimeTableStopInfo> newList = new()
+                    {
+                        new TimeTableStopInfo { TripId = tripId, ArrivalTime = arrivalTime, BusDirection = direction }
+                    };
                     timeTable.TableDict[stopId] = newList;
 
                 }

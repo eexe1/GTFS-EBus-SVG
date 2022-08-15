@@ -67,7 +67,7 @@ namespace BusTripUpdate
                     {
                         return Direction.Inbound;
                     }
-
+                    
                     return Direction.Outbound;
                 }
                 else
