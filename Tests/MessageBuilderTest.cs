@@ -5,7 +5,6 @@ using BusTripUpdate;
 using BusTripUpdate.Utilities;
 using Google.Protobuf;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualBasic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TransitRealtime;
 
