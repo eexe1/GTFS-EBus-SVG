@@ -1,14 +1,16 @@
 ﻿using System;
-namespace BusTripUpdate.StopInfo
+namespace BusTripUpdate
 {
+	/// <summary>
+    /// Parse custome time format
+    /// </summary>
 	public class TimeParser
 	{
-		public TimeParser()
-		{
-		}
-
-		// return -1 if invalid.
-		// time in seconds
+		/// <summary>
+		/// Convert time in (xh:ym:zs) format to seconds
+		/// </summary>
+		/// <param name="time">time string in format of xh:ym:zs</param>
+		/// <returns>seconds; return -1 if fails to parse</returns>
 		public static long ParseTime(string time)
         {
 			char[] delimiterChars = { 'h', 'm', 's'};
@@ -45,15 +47,6 @@ namespace BusTripUpdate.StopInfo
             }
 		}
 
-		public static long ToEpoch(long seconds)
-        {
-
-			long timestamp = (long)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
-
-			return timestamp + seconds;
-
-
-		}
 	}
 }
 

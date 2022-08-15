@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using BusTripUpdate.StopInfo;
 using Microsoft.Extensions.Logging;
 using TransitRealtime;
 
@@ -17,27 +16,35 @@ namespace BusTripUpdate
         }
 
         private readonly ILogger _logger;
-        private readonly IStopInfoReader _readerA;
-        private readonly IStopInfoReader _readerB;
+        private readonly IStopInfoReader[] _readers;
 
-        public MessageBuilder(ILogger logger, IStopInfoReader reader)
+        public MessageBuilder(ILogger logger, IStopInfoReader[] readers)
         {
             _logger = logger;
-            _readerA = reader;
+            _readers = readers;
         }
 
-        public MessageBuilder(ILogger logger, IStopInfoReader readerA, IStopInfoReader readerB)
-        {
-            _logger = logger;
-            _readerA = readerA;
-            _readerB = readerB;
-        }
+        /// <summary>
+        /// Use to override the system time for testing purposes
+        /// </summary>
+        public DateTime? CurrentTimestampOverride;
 
+        public DateTime CurrentTimestamp => CurrentTimestampOverride ?? DateTime.UtcNow;
+
+        /// <summary>
+        /// Build a feed update by doing the following procedures:
+        /// 1. Retrieve StopInfo data and TimeTable.
+        /// 2. Find each estimate a Trip ID by referencing TimeTable.
+        /// 3. Build FeedEntity of either TripUpdate or VehiclePosition with the use of a Trip ID.
+        /// </summary>
+        /// <param name="reader">Reader is used to retrieve StopInfo(eBus System estimation)</param>
+        /// <param name="type">Build an update for either TripUpdate or VehiclePosition</param>
+        /// <returns>A list of FeedEntity</returns>
 #nullable enable
-        private async Task<FeedEntity[]?> GetStopInfoFeedEntity(IStopInfoReader reader, FeedType type = FeedType.TripUpdate)
+        private async Task<FeedEntity[]?> BuildFeedEntity(IStopInfoReader reader, FeedType type)
         {
 
-            List<StopInfo.StopInfo> stopList = await reader.RetrieveStopInfoAsync();
+            List<StopInfo> stopList = await reader.RetrieveStopInfoAsync();
 
             if (stopList.Count < 1)
             {
@@ -49,13 +56,13 @@ namespace BusTripUpdate
             IStopInfoReader.Route route = reader.GetRoute();
 
             var timeTable = TimeTable.GetTimeTable();
-            timeTable.logger = _logger;
+            timeTable.Logger = _logger;
 
             Dictionary<string, TripUpdate> tripPairs = new();
             Dictionary<string, VehiclePosition> busPairs = new();
 
             // iterate the stop list to append a stopTimeUpdate event to a trip
-            foreach (StopInfo.StopInfo stop in stopList)
+            foreach (StopInfo stop in stopList)
             {
                 long arrivalInterval = TimeParser.ParseTime(stop.Est);
                 string sid = reader.FindSIDBySeq(stop.Seq.ToString(), route);
@@ -65,7 +72,7 @@ namespace BusTripUpdate
                     // invalid estimate
                     continue;
                 }
-                var estimateDateTime = DateTime.UtcNow.AddSeconds(arrivalInterval);
+                var estimateDateTime = CurrentTimestamp.AddSeconds(arrivalInterval);
 
                 var tripId = timeTable.FindNearestTripId(sid, estimateDateTime, stop.Direction);
 
@@ -99,20 +106,21 @@ namespace BusTripUpdate
                             tripPairs.Add(tripId, newTripUpdate);
                         }
 
-                        long arrivalTime = TimeParser.ToEpoch(arrivalInterval);
+                        long arrivalTime = (long)CurrentTimestamp.Subtract(new DateTime(1970, 1, 1)).TotalSeconds + arrivalInterval;
 
                         TripUpdate.Types.StopTimeEvent stopTimeEvent = new()
                         {
                             Time = arrivalTime
                         };
 
-                        TripUpdate.Types.StopTimeUpdate stopTimeUpdate = new() { StopId = sid, Arrival = stopTimeEvent };
+                        TripUpdate.Types.StopTimeUpdate stopTimeUpdate = new() { StopId = sid, Arrival = stopTimeEvent, StopSequence = (uint) stop.Seq };
                         tripPairs[tripId].StopTimeUpdate.Add(stopTimeUpdate);
                         _logger.LogInformation("With Stop Time Update stopId: {0}, arrival: {1}", stopTimeUpdate.StopId, stopTimeUpdate.Arrival);
 
                         break;
                     case FeedType.VehiclePosition:
-                        foreach (StopInfo.StopInfo.BusInfo bus in stop.Bno)
+
+                        foreach (StopInfo.BusInfo bus in stop.Bno)
                         {
                             TripDescriptor tripDescriptor = new()
                             {
@@ -128,7 +136,7 @@ namespace BusTripUpdate
 
                             var busTimestamp = (ulong)bus.Tm;
 
-                            var currentTimestamp = (ulong)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
+                            var currentTimestamp = (ulong)CurrentTimestamp.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
 
                             if (currentTimestamp - busTimestamp > 15 * 60)
                             {
@@ -185,65 +193,61 @@ namespace BusTripUpdate
 
             return feedEntities.ToArray();
         }
+
+        /// <summary>
+        /// Retrieve TripUpdate Message
+        /// </summary>
+        /// <returns>FeedMessage</returns>
 #nullable disable
-        public async Task<FeedMessage> GetStopInfoMessage()
+        public async Task<FeedMessage> GetTripUpdateMessage()
         {
             var message = new FeedMessage();
 
             var header = new FeedHeader
             {
                 GtfsRealtimeVersion = "2",
-                Timestamp = (ulong)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds
+                Timestamp = (ulong)CurrentTimestamp.Subtract(new DateTime(1970, 1, 1)).TotalSeconds
             };
 
             message.Header = header;
 
-            var entityA = await GetStopInfoFeedEntity(_readerA);
-
-            if (entityA is FeedEntity[] valueOfEntityA)
+            foreach(var reader in _readers)
             {
-                message.Entity.Add(valueOfEntityA);
-            }
+                var entity = await BuildFeedEntity(reader, FeedType.TripUpdate);
 
-
-            if (_readerB != null)
-            {
-                var entityB = await GetStopInfoFeedEntity(_readerB);
-                if (entityB is FeedEntity[] valueOfEntityB)
+                if (entity is FeedEntity[] valueOfEntity)
                 {
-                    message.Entity.Add(valueOfEntityB);
+                    message.Entity.Add(valueOfEntity);
                 }
             }
+
 
             return message;
         }
 
-        public async Task<FeedMessage> GetBusInfoMessage()
+        /// <summary>
+        /// Retrieve VehiclePosition Message
+        /// </summary>
+        /// <returns>FeedMessage</returns>
+        public async Task<FeedMessage> GetVehiclePositionMessage()
         {
             var message = new FeedMessage();
 
             var header = new FeedHeader
             {
                 GtfsRealtimeVersion = "2",
-                Timestamp = (ulong)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds
+                Timestamp = (ulong)CurrentTimestamp.Subtract(new DateTime(1970, 1, 1)).TotalSeconds
             };
 
             message.Header = header;
 
-            var entityA = await GetStopInfoFeedEntity(_readerA, FeedType.VehiclePosition);
-
-            if (entityA is FeedEntity[] valueOfEntityA)
+            foreach (var reader in _readers)
             {
-                message.Entity.Add(valueOfEntityA);
-            }
+                var entity = await BuildFeedEntity(reader, FeedType.VehiclePosition);
 
-
-            if (_readerB != null)
-            {
-                var entityB = await GetStopInfoFeedEntity(_readerB, FeedType.VehiclePosition);
-                if (entityB is FeedEntity[] valueOfEntityB)
+                if (entity is FeedEntity[] valueOfEntity)
                 {
-                    message.Entity.Add(valueOfEntityB);
+                    message.Entity.Add(valueOfEntity);
                 }
             }
 

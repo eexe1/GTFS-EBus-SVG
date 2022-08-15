@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using BusTripUpdate.Utilities;
@@ -8,9 +8,9 @@ using Microsoft.VisualBasic.FileIO;
 namespace BusTripUpdate
 {
     /// <summary>
-    /// Models an arriving bus at a stop.
+    /// Models an arriving bus at a stop in Time Table.
     /// </summary>
-    public class TimeTableStopInformation
+    public class TimeTableStopInfo
     {
         /// <summary>
         /// Inbound (returning to Kingstown);
@@ -24,15 +24,15 @@ namespace BusTripUpdate
         /// <summary>
         /// Trip ID attached to the bus
         /// </summary>
-        public string tripId;
+        public string TripId;
         /// <summary>
         /// The scheduled arrival time
         /// </summary>
-        public string arrivalTime;
+        public string ArrivalTime;
         /// <summary>
         /// The direction of the bus
         /// </summary>
-        public Direction direction;
+        public Direction BusDirection;
 
     }
 
@@ -41,26 +41,35 @@ namespace BusTripUpdate
     /// </summary>
     public class TimeTable
     {
+        /// <summary>
+        /// Singleton of TimeTable.
+        /// </summary>
+        private static TimeTable _instance;
 
         public TimeTable()
         {
-            dictionary = new Dictionary<string, List<TimeTableStopInformation>>();
+            TableDict = new Dictionary<string, List<TimeTableStopInfo>>();
         }
 #nullable enable
-        public ILogger? logger;
+        public ILogger? Logger;
 #nullable disable
 
         /// <value>Stores TimeTable information keyed by StopId. Each stop has a list of bus arriving information</value> 
-        public Dictionary<string, List<TimeTableStopInformation>> dictionary;
+        public Dictionary<string, List<TimeTableStopInfo>> TableDict;
 
         /// <summary>
-        /// Gets a TimieTable instance
+        /// Returns the TimieTable instance.
         /// </summary>
         /// <returns>TimeTable</returns>
         public static TimeTable GetTimeTable()
         {
 
-            var path = @"./ReferenceData/stop_times.txt";
+            if (_instance != null)
+            {
+                return _instance;
+            }
+
+            var path = @"./ReferenceData/time_table.txt";
             using TextFieldParser csvParser = new(path);
             csvParser.CommentTokens = new string[] { "#" };
             csvParser.SetDelimiters(new string[] { "," });
@@ -82,14 +91,14 @@ namespace BusTripUpdate
                 string stopId = fields[3];
                 string stopSequence = fields[4];
 
-                var direction = TimeTableStopInformation.Direction.Outbound;
+                var direction = TimeTableStopInfo.Direction.Outbound;
 
                 // Leeward side
                 if (tripId.Contains("L"))
                 {
                     if (int.Parse(stopSequence) > Constants.leewardEoS)
                     {
-                        direction = TimeTableStopInformation.Direction.Inbound;
+                        direction = TimeTableStopInfo.Direction.Inbound;
                     }
                 }
                 // Windward side
@@ -97,26 +106,30 @@ namespace BusTripUpdate
                 {
                     if (int.Parse(stopSequence) > Constants.windwardEoS)
                     {
-                        direction = TimeTableStopInformation.Direction.Inbound;
+                        direction = TimeTableStopInfo.Direction.Inbound;
                     }
                 }
 
-                if (timeTable.dictionary.TryGetValue(stopId, out List<TimeTableStopInformation> list))
+                if (timeTable.TableDict.TryGetValue(stopId, out List<TimeTableStopInfo> list))
                 {
-                    list.Add(new TimeTableStopInformation { tripId = tripId, arrivalTime = arrivalTime, direction = direction });
-                    timeTable.dictionary[stopId] = list;
+                    list.Add(new TimeTableStopInfo { TripId = tripId, ArrivalTime = arrivalTime, BusDirection = direction });
+                    timeTable.TableDict[stopId] = list;
                 }
                 else
                 {
-                    List<TimeTableStopInformation> newList = new();
-                    newList.Add(new TimeTableStopInformation { tripId = tripId, arrivalTime = arrivalTime, direction = direction });
-                    timeTable.dictionary[stopId] = newList;
+                    List<TimeTableStopInfo> newList = new()
+                    {
+                        new TimeTableStopInfo { TripId = tripId, ArrivalTime = arrivalTime, BusDirection = direction }
+                    };
+                    timeTable.TableDict[stopId] = newList;
 
                 }
 
             }
 
-            return timeTable;
+            _instance = timeTable;
+
+            return _instance;
         }
 
         /** 
@@ -128,12 +141,12 @@ namespace BusTripUpdate
         <param name="direction">The direction the Trip belongs to</param>
         */
 #nullable enable
-        public string? FindNearestTripId(string stopId, DateTime estimateTime, TimeTableStopInformation.Direction direction)
+        public string? FindNearestTripId(string stopId, DateTime estimateTime, TimeTableStopInfo.Direction direction)
         {
 
             string? result = null;
 
-            if (dictionary.TryGetValue(stopId, out List<TimeTableStopInformation>? list))
+            if (TableDict.TryGetValue(stopId, out List<TimeTableStopInfo>? list))
             {
                 CultureInfo provider = CultureInfo.CurrentCulture;
 
@@ -141,10 +154,10 @@ namespace BusTripUpdate
                 // otherwise, it is considered an inconceivable estimate.
                 double min = 60;
 
-                list.ForEach(delegate (TimeTableStopInformation info)
+                list.ForEach(delegate (TimeTableStopInfo info)
                 {
 
-                    if (direction == info.direction)
+                    if (direction == info.BusDirection)
                     {
                         // convert to AST so Sunday trip can be identified.
                         var astTime = TimeHelper.TimeToAST(estimateTime);
@@ -153,8 +166,8 @@ namespace BusTripUpdate
                         /* Only 2 types of Schedule: Mon-Sat & Sun
                          * The condition enforces which schedule to apply
                          */
-                        if (astTime.DayOfWeek == DayOfWeek.Sunday && info.tripId.Contains("S")
-                            || astTime.DayOfWeek != DayOfWeek.Sunday && !info.tripId.Contains("S"))
+                        if (astTime.DayOfWeek == DayOfWeek.Sunday && info.TripId.Contains("S")
+                            || astTime.DayOfWeek != DayOfWeek.Sunday && !info.TripId.Contains("S"))
                         {
 
                             /* Compare time only (date component is not relevant as every day has the same timetable)
@@ -163,7 +176,7 @@ namespace BusTripUpdate
                             var minute = astTime.Minute.ToString("D2");
                             var second = astTime.Second.ToString("D2");
 
-                            var value = String.Format("{0}-04:00", info.arrivalTime);
+                            var value = String.Format("{0}-04:00", info.ArrivalTime);
                             var estimateValue = String.Format("{0}:{1}:{2}-04:00", hour, minute, second);
 
                             var fixedArrivalTime = DateTime.ParseExact(value, "H:mm:sszzz", provider).ToUniversalTime();
@@ -176,7 +189,7 @@ namespace BusTripUpdate
                             if (difference < min)
                             {
                                 min = difference;
-                                result = info.tripId;
+                                result = info.TripId;
                             }
 
                         }

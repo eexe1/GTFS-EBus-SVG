@@ -1,0 +1,5 @@
+ignore:
+  - "TripUpdate/proto/GtfsRealtime.cs"
+coverage:
+  status:
+    patch: off

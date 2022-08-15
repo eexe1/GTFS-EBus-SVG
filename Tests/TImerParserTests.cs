@@ -1,4 +1,4 @@
-﻿using BusTripUpdate.StopInfo;
+﻿using BusTripUpdate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using System;

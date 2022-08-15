@@ -3,15 +3,15 @@ using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace BusTripUpdate.StopInfo
+namespace BusTripUpdate
 {
+    /// <summary>
+    /// Reader reads from local test data of StopInfo
+    /// </summary>
     public class SampleStopInfoReader : IStopInfoReader
     {
-        public SampleStopInfoReader()
-        {
-        }
 
-        public string fileUrl = @"./TestData/stopinfo.json";
+        public string fileUrl = @"./TestData/stop_info.json";
 
         public IStopInfoReader.Route route = IStopInfoReader.Route.Windward;
 

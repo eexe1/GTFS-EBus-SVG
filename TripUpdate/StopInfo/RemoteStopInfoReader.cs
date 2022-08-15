@@ -4,14 +4,17 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace BusTripUpdate.StopInfo
+namespace BusTripUpdate
 {
-	public class StopInfoReader: IStopInfoReader
+    /// <summary>
+    /// Read StopInfo data from the StopInfo API.
+    /// </summary>
+	public class RemoteStopInfoReader: IStopInfoReader
 	{
-        public readonly IStopInfoReader.Route _route;
-        private readonly HttpClient client = new();
+        private readonly IStopInfoReader.Route _route;
+        private readonly HttpClient _client = new();
 
-        public StopInfoReader(IStopInfoReader.Route route)
+        public RemoteStopInfoReader(IStopInfoReader.Route route)
 		{
             _route = route;
 		}
@@ -23,7 +26,6 @@ namespace BusTripUpdate.StopInfo
 
         public async Task<List<StopInfo>> RetrieveStopInfoAsync()
         {
-            // Call asynchronous network methods in a try/catch block to handle exceptions.
             try
             {
                 
@@ -39,7 +41,7 @@ namespace BusTripUpdate.StopInfo
                         break;
                 }
 
-                string jsonString = await client.GetStringAsync(url);
+                string jsonString = await _client.GetStringAsync(url);
 
                 var serializeOptions = new JsonSerializerOptions
                 {

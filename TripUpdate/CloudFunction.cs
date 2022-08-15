@@ -2,7 +2,6 @@ using Google.Cloud.Functions.Framework;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
-using BusTripUpdate.StopInfo;
 using TransitRealtime;
 using Google.Protobuf;
 using Microsoft.AspNetCore.Http.Features;
@@ -12,7 +11,6 @@ namespace BusTripUpdate
     public class CloudFunction : IHttpFunction
     {
         private readonly ILogger _logger;
-
 
         public CloudFunction(ILogger<CloudFunction> logger) =>
             _logger = logger;
@@ -29,7 +27,7 @@ namespace BusTripUpdate
             var isAll = route?.ToLower() == "all";
             var isVehiclePosition = feedType?.ToLower() == "vehicle";
 
-            StopInfoReader reader;
+            RemoteStopInfoReader reader;
 
             IStopInfoReader.Route routeEnum = isLeeward ? IStopInfoReader.Route.Leeward : IStopInfoReader.Route.Windward;
 
@@ -47,10 +45,11 @@ namespace BusTripUpdate
             {
                 _logger.LogInformation("Start to gather bus info for both routes");
                 // get data from both routes
-                StopInfoReader readerA = new(IStopInfoReader.Route.Windward);
-                StopInfoReader readerB = new(IStopInfoReader.Route.Leeward);
-                MessageBuilder messageBuilder = new(_logger, readerA, readerB);
-                message = await messageBuilder.GetBusInfoMessage();
+                RemoteStopInfoReader readerA = new(IStopInfoReader.Route.Windward);
+                RemoteStopInfoReader readerB = new(IStopInfoReader.Route.Leeward);
+                IStopInfoReader[] readers = { readerA, readerB };
+                MessageBuilder messageBuilder = new(_logger, readers);
+                message = await messageBuilder.GetVehiclePositionMessage();
             }
             else
             {
@@ -58,17 +57,19 @@ namespace BusTripUpdate
                 {
                     _logger.LogInformation("Start to gather stop info for both routes");
                     // get data from both routes
-                    StopInfoReader readerA = new(IStopInfoReader.Route.Windward);
-                    StopInfoReader readerB = new(IStopInfoReader.Route.Leeward);
-                    MessageBuilder messageBuilder = new(_logger, readerA, readerB);
-                    message = await messageBuilder.GetStopInfoMessage();
+                    RemoteStopInfoReader readerA = new(IStopInfoReader.Route.Windward);
+                    RemoteStopInfoReader readerB = new(IStopInfoReader.Route.Leeward);
+                    IStopInfoReader[] readers = { readerA, readerB };
+                    MessageBuilder messageBuilder = new(_logger, readers);
+                    message = await messageBuilder.GetTripUpdateMessage();
                 }
                 else
                 {
                     reader = new(routeEnum);
                     _logger.LogInformation("Start to gather stop info for route:{0}", routeEnum);
-                    MessageBuilder messageBuilder = new(_logger, reader);
-                    message = await messageBuilder.GetStopInfoMessage();
+                    IStopInfoReader[] readers = { reader };
+                    MessageBuilder messageBuilder = new(_logger, readers);
+                    message = await messageBuilder.GetTripUpdateMessage();
                 }
             }
 

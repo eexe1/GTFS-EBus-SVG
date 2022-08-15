@@ -3,22 +3,20 @@ namespace BusTripUpdate.Utilities
 {
     public class TimeHelper
     {
-        public TimeHelper()
-        {
-        }
 
         public static TimeZoneInfo GetASTZone()
         {
             TimeZoneInfo atlanticTimeZone;
 
-            // Linux & MacOS machine from ICU
+
             try
             {
+                // Windows machines
                 atlanticTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Atlantic Standard Time");
             }
             catch (TimeZoneNotFoundException)
             {
-            // Windows machines
+                // Linux & MacOS machine from ICU
                 atlanticTimeZone = TimeZoneInfo.FindSystemTimeZoneById("America/St_Vincent");
             }
 
@@ -27,7 +25,7 @@ namespace BusTripUpdate.Utilities
 
         public static DateTime CurrentTimeInAST()
         {
-          return TimeToAST(DateTime.Now);
+            return TimeToAST(DateTime.Now);
         }
 
         public static DateTime TimeToAST(DateTime dateTime)
@@ -35,5 +33,9 @@ namespace BusTripUpdate.Utilities
             return TimeZoneInfo.ConvertTime(dateTime, GetASTZone());
         }
 
+        public static DateTime TimeFromEpoch(double seconds)
+        {
+            return DateTime.UnixEpoch.AddSeconds(seconds);
+        }
     }
 }

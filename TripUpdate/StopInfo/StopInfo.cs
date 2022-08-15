@@ -1,8 +1,12 @@
 ﻿using System;
-using static BusTripUpdate.TimeTableStopInformation;
+using static BusTripUpdate.TimeTableStopInfo;
 
-namespace BusTripUpdate.StopInfo
+namespace BusTripUpdate
 {
+    /// <summary>
+    /// Represents an entry received from StopInfo API.
+    /// Each StopInfo contains the arrival estimate and basic information.
+    /// </summary>
     public class StopInfo
     {
 
@@ -11,20 +15,37 @@ namespace BusTripUpdate.StopInfo
             public string No { get; set; }
             public float Lat { get; set; }
             public float Lon { get; set; }
-            public float? Tm { get; set; }
+            public double? Tm { get; set; }
+            /// <summary>
+            /// Sid from the eBus system is not usable as our Stop ID is different
+            /// </summary>
             public int Sid { get; set; }
             public int Seq { get; set; }
             public string Alias { get; set; }
         }
 
-        // Route Id: 4 is Windward, 5 is Leeward
+        /// <summary>
+        /// Route Id: 4 is Windward, 5 is Leeward
+        /// </summary>
         public int Id { get; set; }
-        // Stop sequence
+        /// <summary>
+        /// Stop sequence used to identity the bus stop.
+        /// Sequence is unique in each route.
+        /// </summary>
         public int Seq { get; set; }
+        /// <summary>
+        /// Estimate of arrival time in format of XhYmZs.
+        /// </summary>
         public string Est { get; set; }
 
+        /// <summary>
+        /// Contains buses' basic info and coordinate
+        /// </summary>
         public BusInfo[] Bno { get; set; }
 
+        /// <summary>
+        /// Indicates the direction of the upcoming bus.
+        /// </summary>
         public Direction Direction
         {
             get
@@ -46,7 +67,7 @@ namespace BusTripUpdate.StopInfo
                     {
                         return Direction.Inbound;
                     }
-
+                    
                     return Direction.Outbound;
                 }
                 else
